@@ -7,6 +7,35 @@ const parser = new XMLParser({
   isArray: (name) => name === 'item' || name === 'rank',
 })
 
+interface Rank {
+  '@_name'?: string
+  '@_value'?: string
+}
+
+interface ParsedItem {
+  '@_objectid': string
+  name: string
+  thumbnail?: string
+  image?: string
+  yearpublished?: string
+  numplays?: string
+  stats?: {
+    '@_minplayers'?: string
+    '@_maxplayers'?: string
+    '@_minplaytime'?: string
+    '@_maxplaytime'?: string
+    rating?: {
+      '@_value'?: string
+      average?: { '@_value'?: string }
+      ranks?: { rank?: Rank[] | Rank }
+    }
+  }
+}
+
+interface ParsedCollection {
+  items?: { item: ParsedItem | ParsedItem[] }
+}
+
 export async function fetchCollection(username: string): Promise<string> {
   const url = `https://boardgamegeek.com/xmlapi2/collection?username=${encodeURIComponent(username)}&stats=1&own=1`
 
@@ -25,7 +54,7 @@ export async function fetchCollection(username: string): Promise<string> {
 }
 
 export function parseCollection(xml: string): BoardGame[] {
-  const parsed = parser.parse(xml) as any
+  const parsed = parser.parse(xml) as ParsedCollection
 
   if (!parsed.items || !parsed.items.item) {
     return []
@@ -34,12 +63,12 @@ export function parseCollection(xml: string): BoardGame[] {
   const items = Array.isArray(parsed.items.item) ? parsed.items.item : [parsed.items.item]
 
   return items
-    .map((item: any) => {
+    .map((item: ParsedItem) => {
       const stats = item.stats || {}
       const rating = stats.rating || {}
       const ranks = rating.ranks || {}
-      const rankArray = Array.isArray(ranks.rank) ? ranks.rank : [ranks.rank]
-      const bggRank = rankArray.find((r: any) => r?.['@_name'] === 'boardgame')
+      const rankList = ranks.rank ? (Array.isArray(ranks.rank) ? ranks.rank : [ranks.rank]) : []
+      const bggRank = rankList.find((r: Rank) => r?.['@_name'] === 'boardgame')
 
       let thumbnail = item.thumbnail || ''
       if (thumbnail.startsWith('//')) {

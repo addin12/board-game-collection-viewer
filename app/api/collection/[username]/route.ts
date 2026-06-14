@@ -1,4 +1,4 @@
-import { fetchCollection, parseCollection } from '@/lib/bgg'
+import { parseCollection } from '@/lib/bgg'
 import { BoardGame } from '@/lib/types'
 
 export const dynamic = 'force-dynamic'
@@ -111,7 +111,8 @@ async function fetchWithRetry(username: string, maxAttempts: number = 5, delayMs
       if (attempt === maxAttempts) {
         throw error
       }
-      if ((error as any)?.cause === 'NOT_FOUND' || (error as any)?.cause === 'AUTH_REQUIRED') {
+      const err = error as Error & { cause?: string }
+      if (err?.cause === 'NOT_FOUND' || err?.cause === 'AUTH_REQUIRED') {
         throw error
       }
       await sleep(delayMs)

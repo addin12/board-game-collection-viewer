@@ -3,7 +3,6 @@ import Link from 'next/link'
 import { Metadata } from 'next'
 import CollectionStats from '@/components/CollectionStats'
 import GameGrid from '@/components/GameGrid'
-import { getBaseUrl } from '@/lib/utils'
 
 export async function generateMetadata({
   params,
@@ -65,7 +64,7 @@ export default async function CollectionPage({
             ← Back to Search
           </Link>
           <h1 className="text-3xl md:text-4xl font-bold text-slate-100">
-            {username}'s Collection
+            {username}&apos;s Collection
           </h1>
         </div>
 

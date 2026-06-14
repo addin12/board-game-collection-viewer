@@ -1,7 +1,6 @@
 'use client'
 
 import { FilterState, SortField } from '@/lib/types'
-import clsx from 'clsx'
 
 interface FilterBarProps {
   filters: FilterState
@@ -10,7 +9,6 @@ interface FilterBarProps {
 }
 
 export default function FilterBar({ filters, onChange, gameCount }: FilterBarProps) {
-  const playerOptions = Array.from({ length: 8 }, (_, i) => i + 1)
   const playTimeOptions = [30, 60, 90, 120, 180, 300]
 
   return (
