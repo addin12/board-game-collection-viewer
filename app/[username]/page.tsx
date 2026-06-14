@@ -46,7 +46,7 @@ export default async function CollectionPage({
     <main className="min-h-screen bg-slate-900 px-4 py-8">
       <div className="max-w-7xl mx-auto">
         <div className="mb-8">
-          <Link href="/" className="text-amber-400 hover:text-amber-300 text-sm font-semibold mb-4 inline-block">
+          <Link href="/session" className="text-amber-400 hover:text-amber-300 text-sm font-semibold mb-4 inline-block">
             ← Back to Search
           </Link>
           <h1 className="text-3xl md:text-4xl font-bold text-slate-100">
