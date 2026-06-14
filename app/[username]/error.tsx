@@ -14,7 +14,11 @@ export default function Error({
       <div className="max-w-lg text-center">
         <div className="bg-slate-800 border border-red-600/30 rounded-lg p-8 mb-6">
           <h1 className="text-2xl font-bold text-red-400 mb-2">Failed to Load Collection</h1>
-          <p className="text-slate-300 mb-4">{error.message}</p>
+          <p className="text-slate-300 mb-2">{error.message || 'Unknown error occurred'}</p>
+
+          {error.digest && (
+            <p className="text-xs text-slate-500 mb-4 font-mono">Error ID: {error.digest}</p>
+          )}
 
           {error.message.includes('User not found') && (
             <p className="text-sm text-slate-400">Please check the username and try again.</p>
@@ -23,6 +27,12 @@ export default function Error({
           {error.message.includes('temporarily unavailable') && (
             <p className="text-sm text-slate-400">
               BoardGameGeek API is experiencing issues. Please try again in a few moments.
+            </p>
+          )}
+
+          {!error.message && (
+            <p className="text-sm text-slate-400">
+              An unexpected error occurred. Check the browser console for details.
             </p>
           )}
         </div>

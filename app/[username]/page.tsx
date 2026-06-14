@@ -19,20 +19,33 @@ export async function generateMetadata({
 async function getCollection(username: string) {
   const url = `${getBaseUrl()}/api/collection/${encodeURIComponent(username)}`
 
-  const response = await fetch(url, {
-    cache: 'no-store',
-  })
+  console.log('[getCollection] Fetching from:', url)
 
-  if (response.status === 404) {
-    notFound()
+  try {
+    const response = await fetch(url, {
+      cache: 'no-store',
+    })
+
+    console.log('[getCollection] Response status:', response.status)
+
+    if (response.status === 404) {
+      notFound()
+    }
+
+    if (!response.ok) {
+      const errorData = await response.json()
+      const errorMessage = errorData.error || `API returned ${response.status}`
+      console.error('[getCollection] API error:', errorMessage)
+      throw new Error(errorMessage)
+    }
+
+    const data = await response.json()
+    console.log('[getCollection] Success, games count:', data.length)
+    return data
+  } catch (error) {
+    console.error('[getCollection] Error:', error)
+    throw error
   }
-
-  if (!response.ok) {
-    const error = await response.json()
-    throw new Error(error.error || 'Failed to fetch collection')
-  }
-
-  return response.json()
 }
 
 export default async function CollectionPage({
