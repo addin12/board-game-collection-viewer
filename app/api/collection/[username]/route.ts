@@ -55,8 +55,11 @@ const DEMO_DATA: BoardGame[] = [
 ]
 
 async function fetchWithRetry(username: string, maxAttempts: number = 5, delayMs: number = 3000): Promise<BoardGame[]> {
+  console.log(`[fetchWithRetry] Starting for username: ${username}`)
+
   for (let attempt = 1; attempt <= maxAttempts; attempt++) {
     try {
+      console.log(`[fetchWithRetry] Attempt ${attempt}/${maxAttempts}`)
       const response = await fetch(
         `https://boardgamegeek.com/xmlapi2/collection?username=${encodeURIComponent(username)}&stats=1&own=1`,
         {
@@ -66,13 +69,17 @@ async function fetchWithRetry(username: string, maxAttempts: number = 5, delayMs
         }
       )
 
+      console.log(`[fetchWithRetry] Response status: ${response.status}`)
+
       if (response.status === 200) {
         const xml = await response.text()
+        console.log(`[fetchWithRetry] Parsing XML, length: ${xml.length}`)
         return parseCollection(xml)
       }
 
       if (response.status === 202) {
         if (attempt < maxAttempts) {
+          console.log(`[fetchWithRetry] Got 202, retrying in ${delayMs}ms...`)
           await sleep(delayMs)
           continue
         } else {
@@ -85,9 +92,10 @@ async function fetchWithRetry(username: string, maxAttempts: number = 5, delayMs
       }
 
       if (response.status === 401) {
+        console.log(`[fetchWithRetry] Got 401 for username: ${username}`)
         // BGG API now requires Bearer authentication - return demo data for testing
         if (username.toLowerCase() === 'demo' || username.toLowerCase() === 'deedeen') {
-          console.warn(`BGG API requires authentication. Returning demo data for testing.`)
+          console.warn(`[fetchWithRetry] Returning demo data for testing`)
           return DEMO_DATA
         }
         throw new Error('BoardGameGeek API currently requires authentication. Please try again later.', { cause: 'AUTH_REQUIRED' })
@@ -99,6 +107,7 @@ async function fetchWithRetry(username: string, maxAttempts: number = 5, delayMs
 
       throw new Error(`BGG API error: ${response.status}`)
     } catch (error) {
+      console.error(`[fetchWithRetry] Catch block on attempt ${attempt}:`, error)
       if (attempt === maxAttempts) {
         throw error
       }
@@ -117,17 +126,25 @@ export async function GET(
   { params }: { params: Promise<{ username: string }> }
 ) {
   try {
+    console.log('[GET] API request received')
     const { username } = await params
+
+    console.log(`[GET] Username: ${username}`)
 
     // Validate username to prevent injection
     if (!username || !/^[a-zA-Z0-9_-]+$/.test(username)) {
+      console.error('[GET] Invalid username format')
       return Response.json({ error: 'Invalid username' }, { status: 400 })
     }
 
+    console.log('[GET] Calling fetchWithRetry...')
     const games = await fetchWithRetry(username)
+    console.log(`[GET] Success! Games count: ${games.length}`)
     return Response.json(games)
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Unknown error'
+
+    console.error('[GET] Error caught:', message)
 
     if (message.includes('User not found') || message.includes('not found')) {
       return Response.json({ error: 'User not found or collection is private' }, { status: 404 })
