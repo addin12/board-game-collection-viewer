@@ -77,16 +77,19 @@ Supabase's free tier needs no credit card. Setup takes ~3 minutes:
    > The open policy suits a small private group. Tighten it (require auth, validate fields)
    > if the site becomes public.
 
-3. In **Project Settings → API**, copy the **Project URL** and the **anon public** key.
+3. In **Project Settings → API**, copy the **Project URL** and the public API key — newer
+   projects show a **publishable** key (`sb_publishable_…`); older ones show an **anon** key
+   (`eyJ…`). Either works.
 4. Add them to `.env.local` locally (see [`.env.example`](.env.example)) and to your Vercel
    project's **Settings → Environment Variables**:
 
    ```env
    NEXT_PUBLIC_SUPABASE_URL=https://xxxx.supabase.co
-   NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGci...
+   NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=sb_publishable_...
+   # older projects: NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJ... (use this instead)
    ```
 
-   The anon key is safe to expose to the browser by design; access is governed by the RLS policy above.
+   This key is safe to expose to the browser by design; access is governed by the RLS policy above.
 
 > ⏰ **Idle pause:** free Supabase projects pause after ~7 days with **no** database activity. The
 > [`keep-supabase-awake`](.github/workflows/keep-supabase-awake.yml) Action pings it every few days
