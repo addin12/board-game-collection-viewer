@@ -130,7 +130,6 @@ node scripts/build-deedeen.mjs
 - [x] Call a session + RSVP schedule (Supabase-backed, with an in-memory dev fallback)
 - [x] Automated weekly refresh of the community data ([GitHub Action](.github/workflows/refresh-community.yml))
 - [ ] Member accounts + self-service collection sync
-- [ ] WhatsApp / email notifications to the play group
 
 ---
 
