@@ -129,7 +129,7 @@ node scripts/build-deedeen.mjs
 - [x] High-resolution, non-pixelated game artwork
 - [x] Call a session + RSVP schedule (Supabase-backed, with an in-memory dev fallback)
 - [x] Automated weekly refresh of the community data ([GitHub Action](.github/workflows/refresh-community.yml))
-- [ ] Member accounts + self-service collection sync
+- [ ] Member accounts + self-service collection sync — **deferred** until BoardGameGeek's API is unlocked (no clean third-party identity-verification or sync channel exists today)
 
 ---
 
