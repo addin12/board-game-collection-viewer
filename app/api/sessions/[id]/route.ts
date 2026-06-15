@@ -16,11 +16,13 @@ export async function PATCH(
   try {
     const { id } = await params
     const body = await req.json()
-    const { date, description, games } = body ?? {}
+    const { date, description, location, players, games } = body ?? {}
 
     const updated = await updateSession(id, {
       ...(typeof date === 'string' ? { date } : {}),
       ...(typeof description === 'string' ? { description } : {}),
+      ...(typeof location === 'string' ? { location } : {}),
+      ...(Array.isArray(players) ? { players: players.filter((p) => typeof p === 'string') } : {}),
       ...(games !== undefined ? { games: sanitizeGames(games) } : {}),
     })
     if (!updated) {

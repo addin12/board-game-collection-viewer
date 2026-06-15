@@ -1,6 +1,6 @@
 import { getSupabase } from './supabase'
 
-export type RsvpStatus = 'in' | 'out'
+export type RsvpStatus = 'in' | 'out' | 'maybe'
 
 export interface GameRef {
   id: string
@@ -12,6 +12,7 @@ export interface GameSession {
   id: string
   date: string // ISO datetime when the group will play
   description: string
+  location: string // where it's happening (optional)
   host: string // member who called the session
   players: string[] // proposed table (from the session builder)
   games: GameRef[] // games planned for the session (a game night can have several)
@@ -22,6 +23,7 @@ export interface GameSession {
 export interface CreateSessionInput {
   date: string
   description: string
+  location?: string
   host: string
   players: string[]
   games?: GameRef[]
@@ -30,6 +32,8 @@ export interface CreateSessionInput {
 export interface UpdateSessionInput {
   date?: string
   description?: string
+  location?: string
+  players?: string[]
   games?: GameRef[]
 }
 
@@ -56,6 +60,7 @@ interface SessionRow {
   id: string
   date: string
   description: string | null
+  location?: string | null
   host: string
   players: string[] | null
   game?: GameRef | null // legacy single-game column (older rows)
@@ -71,6 +76,7 @@ function rowToSession(row: SessionRow): GameSession {
     id: row.id,
     date: new Date(row.date).toISOString(),
     description: row.description ?? '',
+    location: row.location ?? '',
     host: row.host,
     players: row.players ?? [],
     games,
@@ -79,9 +85,42 @@ function rowToSession(row: SessionRow): GameSession {
   }
 }
 
-// True when a write failed only because the `games` column hasn't been added yet.
-function gamesColumnMissing(err: { message?: string } | null): boolean {
-  return !!err && /games/i.test(err.message || '')
+// PostgREST names the missing column in its error; strip it and retry so the app
+// keeps working before optional columns (games, location) have been migrated.
+function missingColumn(err: { message?: string } | null): string | null {
+  const m = err?.message?.match(/'(\w+)' column/)
+  return m ? m[1] : null
+}
+
+async function insertRow(
+  sb: NonNullable<ReturnType<typeof getSupabase>>,
+  row: Record<string, unknown>
+): Promise<SessionRow> {
+  const attempt: Record<string, unknown> = { ...row }
+  for (let i = 0; i <= Object.keys(row).length; i++) {
+    const { data, error } = await sb.from(TABLE).insert(attempt).select().single()
+    if (!error) return data as SessionRow
+    const col = missingColumn(error)
+    if (!col || !(col in attempt)) throw new Error(error.message)
+    delete attempt[col]
+  }
+  throw new Error('Failed to create session')
+}
+
+async function updateRow(
+  sb: NonNullable<ReturnType<typeof getSupabase>>,
+  id: string,
+  patch: Record<string, unknown>
+): Promise<SessionRow | null> {
+  const attempt: Record<string, unknown> = { ...patch }
+  for (let i = 0; i <= Object.keys(patch).length; i++) {
+    const { data, error } = await sb.from(TABLE).update(attempt).eq('id', id).select().maybeSingle()
+    if (!error) return (data as SessionRow) ?? null
+    const col = missingColumn(error)
+    if (!col || !(col in attempt)) throw new Error(error.message)
+    delete attempt[col]
+  }
+  throw new Error('Failed to update session')
 }
 
 // ---------- public API (auto-selects Supabase or in-memory) ----------
@@ -99,6 +138,7 @@ export async function listSessions(): Promise<GameSession[]> {
 
 export async function createSession(input: CreateSessionInput): Promise<GameSession> {
   const games = input.games ?? []
+  const location = (input.location ?? '').trim()
   const sb = getSupabase()
 
   if (!sb) {
@@ -106,6 +146,7 @@ export async function createSession(input: CreateSessionInput): Promise<GameSess
       id: crypto.randomUUID(),
       date: new Date(input.date).toISOString(),
       description: input.description.trim(),
+      location,
       host: input.host,
       players: input.players,
       games,
@@ -117,21 +158,17 @@ export async function createSession(input: CreateSessionInput): Promise<GameSess
   }
 
   // `game` (legacy, first game) is kept in sync for backward compatibility.
-  const core = {
+  const row = await insertRow(sb, {
     date: new Date(input.date).toISOString(),
     description: input.description.trim(),
+    location,
     host: input.host,
     players: input.players,
     game: games[0] ?? null,
+    games,
     rsvps: { [input.host]: 'in' as RsvpStatus },
-  }
-
-  let { data, error } = await sb.from(TABLE).insert({ ...core, games }).select().single()
-  if (error && gamesColumnMissing(error)) {
-    ;({ data, error } = await sb.from(TABLE).insert(core).select().single())
-  }
-  if (error) throw new Error(error.message)
-  return rowToSession(data as SessionRow)
+  })
+  return rowToSession(row)
 }
 
 export async function setRsvp(
@@ -172,34 +209,35 @@ export async function setRsvp(
 }
 
 export async function updateSession(id: string, input: UpdateSessionInput): Promise<GameSession | null> {
-  const core: { date?: string; description?: string; game?: GameRef | null } = {}
-  if (input.date !== undefined) core.date = new Date(input.date).toISOString()
-  if (input.description !== undefined) core.description = input.description.trim()
-  if (input.games !== undefined) core.game = input.games[0] ?? null
+  const patch: Record<string, unknown> = {}
+  if (input.date !== undefined) patch.date = new Date(input.date).toISOString()
+  if (input.description !== undefined) patch.description = input.description.trim()
+  if (input.location !== undefined) patch.location = input.location.trim()
+  if (input.players !== undefined) patch.players = input.players
+  if (input.games !== undefined) {
+    patch.games = input.games
+    patch.game = input.games[0] ?? null // keep legacy column in sync
+  }
 
   const sb = getSupabase()
   if (!sb) {
     const s = memStore.get(id)
     if (!s) return null
-    if (core.date !== undefined) s.date = core.date
-    if (core.description !== undefined) s.description = core.description
+    if (input.date !== undefined) s.date = patch.date as string
+    if (input.description !== undefined) s.description = patch.description as string
+    if (input.location !== undefined) s.location = patch.location as string
+    if (input.players !== undefined) s.players = input.players
     if (input.games !== undefined) s.games = input.games
     memStore.set(id, s)
     return s
   }
 
-  const full = input.games !== undefined ? { ...core, games: input.games } : core
-  if (Object.keys(full).length === 0) {
+  if (Object.keys(patch).length === 0) {
     const { data } = await sb.from(TABLE).select('*').eq('id', id).maybeSingle()
     return data ? rowToSession(data as SessionRow) : null
   }
-
-  let { data, error } = await sb.from(TABLE).update(full).eq('id', id).select().maybeSingle()
-  if (error && gamesColumnMissing(error)) {
-    ;({ data, error } = await sb.from(TABLE).update(core).eq('id', id).select().maybeSingle())
-  }
-  if (error) throw new Error(error.message)
-  return data ? rowToSession(data as SessionRow) : null
+  const row = await updateRow(sb, id, patch)
+  return row ? rowToSession(row) : null
 }
 
 export async function deleteSession(id: string): Promise<boolean> {

@@ -65,6 +65,7 @@ Supabase's free tier needs no credit card. Setup takes ~3 minutes:
      players jsonb default '[]'::jsonb,
      game jsonb,                         -- legacy single game (kept for old rows)
      games jsonb default '[]'::jsonb,    -- games for the night (a session can have several)
+     location text default '',           -- where it's happening (optional)
      rsvps jsonb default '{}'::jsonb,
      created_at timestamptz default now()
    );
@@ -78,13 +79,14 @@ Supabase's free tier needs no credit card. Setup takes ~3 minutes:
    > The open policy suits a small private group. Tighten it (require auth, validate fields)
    > if the site becomes public.
 
-   **Already created the table earlier?** Add the multi-game column with:
+   **Already created the table earlier?** Add the newer optional columns with:
 
    ```sql
    alter table sessions add column if not exists games jsonb default '[]'::jsonb;
+   alter table sessions add column if not exists location text default '';
    ```
 
-   Until this column exists the app still works — it just stores a single game per session.
+   Until these columns exist the app still works — it just stores a single game and no location.
 
    *(Optional, recommended)* Add this function so RSVPs update **atomically** (no lost writes when
    two people RSVP at the same instant). Without it, the app falls back to a read-modify-write,

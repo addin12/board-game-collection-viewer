@@ -14,7 +14,7 @@ export async function POST(
     if (!name || typeof name !== 'string') {
       return Response.json({ error: 'A name is required' }, { status: 400 })
     }
-    if (status !== 'in' && status !== 'out' && status !== 'clear') {
+    if (status !== 'in' && status !== 'out' && status !== 'maybe' && status !== 'clear') {
       return Response.json({ error: 'Invalid RSVP status' }, { status: 400 })
     }
 

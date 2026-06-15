@@ -23,7 +23,7 @@ export async function GET() {
 export async function POST(req: Request) {
   try {
     const body = await req.json()
-    const { date, description, host, players, games } = body ?? {}
+    const { date, description, location, host, players, games } = body ?? {}
 
     if (!date || typeof date !== 'string') {
       return Response.json({ error: 'A date is required' }, { status: 400 })
@@ -35,6 +35,7 @@ export async function POST(req: Request) {
     const session = await createSession({
       date,
       description: typeof description === 'string' ? description : '',
+      location: typeof location === 'string' ? location : '',
       host,
       players: Array.isArray(players) ? players.filter((p) => typeof p === 'string') : [],
       games: sanitizeGames(games),

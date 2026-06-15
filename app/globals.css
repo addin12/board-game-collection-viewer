@@ -245,10 +245,15 @@ body::before{
 .rsvp .select option{color:var(--ink)}
 .minibtn{font-family:var(--sans); font-weight:700; font-size:13px; padding:8px 14px; border-radius:9px; border:0; cursor:pointer}
 .minibtn.in{background:linear-gradient(180deg,var(--c-update),#2f7a40); color:#eafdee}
+.minibtn.maybe{background:rgba(227,178,60,.2); color:var(--gold-deep); border:1px solid rgba(227,178,60,.5)}
 .minibtn.out{background:rgba(36,31,21,.08); color:var(--ink-soft); border:1px solid var(--line)}
 .minibtn:hover{filter:brightness(1.05)}
 .minibtn:disabled{opacity:.5; cursor:not-allowed}
 .apill.pending{background:transparent; color:var(--ink-soft); border:1px dashed rgba(36,31,21,.3)}
+.apill.maybe{background:rgba(227,178,60,.18); color:var(--gold-deep); border:1px solid rgba(227,178,60,.45)}
+.scard .sloc{font-size:13.5px; color:var(--ink-soft); margin:6px 0 0; font-weight:600}
+.callink{color:var(--gold-deep); text-decoration:underline}
+.callink:hover{color:var(--gold)}
 .hostactions{display:flex; gap:14px; margin-top:10px; padding-top:10px; border-top:1px solid var(--line)}
 .linkbtn{background:none; border:0; padding:0; cursor:pointer; font-family:var(--sans); font-size:13px; font-weight:700; color:var(--gold-deep)}
 .linkbtn:hover{text-decoration:underline}

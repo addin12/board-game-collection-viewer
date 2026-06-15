@@ -39,6 +39,7 @@ export default function SessionBuilder({
   const [minDate, setMinDate] = useState('')
   const [gameToAdd, setGameToAdd] = useState('')
   const [lockedGames, setLockedGames] = useState<GameRef[]>([])
+  const [location, setLocation] = useState('')
   const [description, setDescription] = useState('')
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState('')
@@ -109,6 +110,7 @@ export default function SessionBuilder({
         body: JSON.stringify({
           date: new Date(date).toISOString(),
           description,
+          location,
           host: effectiveHost,
           players: selected,
           games: lockedGames,
@@ -216,6 +218,11 @@ export default function SessionBuilder({
                       ))}
                     </select>
                   </div>
+                </div>
+
+                <div className="fcol">
+                  <label className="plabel" htmlFor="where">Where (optional)</label>
+                  <input id="where" type="text" className="pinput" placeholder="e.g. Dedi's place" value={location} onChange={(e) => setLocation(e.target.value)} />
                 </div>
 
                 <div className="fcol">
