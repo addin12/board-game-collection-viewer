@@ -198,6 +198,47 @@ body::before{
 .statcard .v.small{font-size:18px}
 .statcard .sub{font-size:12.5px; color:#9fb3a4; margin-top:2px}
 
+/* ---------- forms inside parchment panels ---------- */
+.form{display:flex; flex-direction:column; gap:14px; margin-top:4px}
+.form .frow{display:flex; gap:12px; flex-wrap:wrap}
+.form .fcol{flex:1; min-width:180px; display:flex; flex-direction:column}
+.plabel{font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:var(--gold-deep); font-weight:700; margin-bottom:6px}
+.pinput{font-family:var(--sans); font-size:14.5px; padding:10px 12px; border-radius:10px;
+  border:1px solid var(--line); background:#fffdf7; color:var(--ink); width:100%}
+.pinput:focus{outline:2px solid var(--gold); outline-offset:1px; border-color:transparent}
+.notice{margin-top:14px; padding:12px 14px; border-radius:10px; font-size:14px; font-weight:600;
+  background:rgba(63,155,84,.16); border:1px solid rgba(63,155,84,.4); color:#1f5130}
+.notice a{color:var(--gold-deep)}
+.formerror{color:#a23; font-size:13px; font-weight:600; margin-top:8px}
+
+/* ---------- schedule cards ---------- */
+.sessions{display:flex; flex-direction:column; gap:14px; margin-top:22px}
+.scard{display:flex; gap:16px; align-items:flex-start;
+  background:linear-gradient(180deg,var(--parchment),var(--parchment2));
+  color:var(--ink); border-radius:14px; padding:16px 18px;
+  box-shadow:0 8px 20px rgba(0,0,0,.22); border:1px solid rgba(0,0,0,.06)}
+.scard .when{flex:0 0 auto; width:62px; text-align:center}
+.scard .when .d{font-family:var(--display); font-size:26px; font-weight:600; line-height:1; color:var(--ink)}
+.scard .when .m{font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-soft); font-weight:700; margin-top:3px}
+.scard .when .t{font-size:12px; color:var(--ink-soft); margin-top:4px}
+.scard .sbody{flex:1; min-width:0}
+.scard .sgame{font-family:var(--display); font-size:18px; font-weight:600; color:var(--ink); display:flex; align-items:center; gap:10px}
+.scard .sgame img{border-radius:6px}
+.scard .sdesc{font-size:14px; color:var(--ink-soft); margin:6px 0 0}
+.scard .smeta{font-size:12.5px; color:var(--ink-soft); margin-top:8px}
+.attend{display:flex; gap:6px; flex-wrap:wrap; margin-top:10px}
+.apill{font-size:11.5px; font-weight:700; padding:3px 9px; border-radius:999px;
+  background:rgba(63,155,84,.18); color:#1f5130; border:1px solid rgba(63,155,84,.4)}
+.apill.out{background:rgba(36,31,21,.06); color:var(--ink-soft); border-color:var(--line); text-decoration:line-through}
+.rsvp{display:flex; gap:8px; align-items:center; margin-top:12px; flex-wrap:wrap}
+.rsvp .select{background:#fffdf7; color:var(--ink); border-color:var(--line)}
+.rsvp .select option{color:var(--ink)}
+.minibtn{font-family:var(--sans); font-weight:700; font-size:13px; padding:8px 14px; border-radius:9px; border:0; cursor:pointer}
+.minibtn.in{background:linear-gradient(180deg,var(--c-update),#2f7a40); color:#eafdee}
+.minibtn.out{background:rgba(36,31,21,.08); color:var(--ink-soft); border:1px solid var(--line)}
+.minibtn:hover{filter:brightness(1.05)}
+.minibtn:disabled{opacity:.5; cursor:not-allowed}
+
 /* ---------- helpers ---------- */
 .bar.between{justify-content:space-between}
 .fitrow{display:flex; gap:8px; align-items:center; cursor:pointer}

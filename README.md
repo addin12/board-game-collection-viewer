@@ -16,7 +16,8 @@ A felt-table-themed web app that brings a board game community's collections tog
 | ---- | ------------ |
 | **Home** | A tile menu into every section, styled like a green felt game table. |
 | **All Collection** (`/all`) | The whole community library — **109 games across 16 members** — with live search, an A–Z index, category filtering, and an owner badge on every game. |
-| **Session Collection** (`/session`) | The **"I'm playing with…"** mechanic: add the players at your table and instantly pool their shelves into one list of games you can actually play tonight — with a toggle to show only games that fit your group size. |
+| **Session Collection** (`/session`) | The **"I'm playing with…"** mechanic: add the players at your table, pool their shelves into one list of games you can play tonight (with a group-size filter), then **call a session** — lock a time, host, and game. |
+| **Schedule** (`/schedule`) | Upcoming sessions with **RSVP** — pick your name, mark yourself *in* or *out*, and see who else is coming. |
 | **Update Collection** (`/update`) | Enter a BoardGameGeek username to pull that person's owned games straight from BGG. |
 | **Collection view** (`/[username]`) | A clean, sortable view of any BGG collection with summary stats. |
 
@@ -33,6 +34,7 @@ A felt-table-themed web app that brings a board game community's collections tog
 - **Tailwind CSS v4** + a hand-built felt/parchment/gold design system in [`app/globals.css`](app/globals.css)
 - **[Fraunces](https://fonts.google.com/specimen/Fraunces)** display font via `next/font`
 - **BoardGameGeek** XML API + the public `api.geekdo.com` JSON API for high-resolution artwork
+- **[Firebase / Firestore](https://firebase.google.com/products/firestore)** for persistent sessions + RSVPs (optional — falls back to an in-memory store; see [DEPLOYMENT.md](DEPLOYMENT.md))
 - **[Playwright](https://playwright.dev)** for the data-scraping scripts
 - Deployed free on **[Vercel](https://vercel.com)**
 
@@ -125,9 +127,9 @@ node scripts/build-deedeen.mjs
 - [x] All Collection — search, A–Z index, category filter, owner badges
 - [x] Session builder — "I'm playing with" pooled-collection mechanic
 - [x] High-resolution, non-pixelated game artwork
-- [ ] Persistent sessions & RSVPs (currently UI-only)
+- [x] Call a session + RSVP schedule (Firestore-backed, with an in-memory dev fallback)
 - [ ] Member accounts + self-service collection sync
-- [ ] Schedule page with real upcoming sessions
+- [ ] Automated/scheduled refresh of the community data
 - [ ] WhatsApp / email notifications to the play group
 
 ---

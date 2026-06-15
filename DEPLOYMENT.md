@@ -41,8 +41,50 @@ npm run start    # serve the production build locally
 
 ## Environment variables
 
-None are required — the community library and sample collections are baked in as static data
-(see [`lib/community.ts`](lib/community.ts) and [`lib/deedeen-collection.ts`](lib/deedeen-collection.ts)).
+The community library and sample collections are baked in as static data
+(see [`lib/community.ts`](lib/community.ts) and [`lib/deedeen-collection.ts`](lib/deedeen-collection.ts)),
+so the app runs with **no env vars at all**.
+
+To make **sessions + RSVPs persistent** (the `/session` and `/schedule` pages), add a free
+Firebase/Firestore backend (see below). Without it, the app falls back to an in-memory store
+that works locally but resets on restart and isn't shared across serverless instances.
+
+## Sessions persistence — free Firebase setup
+
+Firestore's **Spark** plan is free, needs no credit card, and never pauses. Setup takes ~3 minutes:
+
+1. Create a project at [console.firebase.google.com](https://console.firebase.google.com).
+2. **Build → Firestore Database → Create database** (start in *test mode*, or use the rules below).
+3. **Project settings → General → Your apps → Web app** (`</>`), register an app, and copy the
+   config values.
+4. Add these to `.env.local` locally (see [`.env.example`](.env.example)) and to your Vercel
+   project's **Settings → Environment Variables**:
+
+   ```env
+   NEXT_PUBLIC_FIREBASE_API_KEY=...
+   NEXT_PUBLIC_FIREBASE_PROJECT_ID=...
+   NEXT_PUBLIC_FIREBASE_APP_ID=...
+   ```
+
+   These are **not secrets** — the Firebase web config is meant to be public; access is governed
+   by Firestore security rules.
+
+5. Suggested Firestore rules for a small trusted group (only the `sessions` collection is used):
+
+   ```text
+   rules_version = '2';
+   service cloud.firestore {
+     match /databases/{database}/documents {
+       match /sessions/{id} {
+         allow read, write: if true;
+       }
+     }
+   }
+   ```
+
+   > Tighten these later if the site becomes public (e.g. require auth, validate fields).
+
+Redeploy and the app automatically switches from the in-memory store to Firestore — no code change.
 
 > ℹ️ **Why no live BGG calls in production?** BoardGameGeek's XML API now requires authentication
 > and returns `401` to anonymous requests. Collections are therefore gathered ahead of time via

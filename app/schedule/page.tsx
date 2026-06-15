@@ -1,4 +1,6 @@
-import ComingSoon from '@/components/ComingSoon'
+import PageHeader from '@/components/PageHeader'
+import SchedulePanel from '@/components/SchedulePanel'
+import { MEMBERS } from '@/lib/community'
 
 export const metadata = {
   title: 'Schedule',
@@ -6,11 +8,17 @@ export const metadata = {
 
 export default function SchedulePage() {
   return (
-    <ComingSoon
-      eyebrow="Schedule"
-      title="Upcoming sessions"
-      lead="See what's being played next and who's in."
-      body="Session scheduling and RSVPs land in the next phase. You'll be able to call out a game night, pick from the community shelf, and let players sign up."
-    />
+    <div className="wrap">
+      <PageHeader />
+
+      <header className="hero">
+        <div className="eyebrow">Schedule</div>
+        <h1>Upcoming sessions</h1>
+        <p>See what&apos;s being played next, and let the group know if you&apos;re in.</p>
+        <div className="rule"></div>
+      </header>
+
+      <SchedulePanel members={MEMBERS} />
+    </div>
   )
 }
