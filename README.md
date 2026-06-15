@@ -1,155 +1,153 @@
-# Board Game Collection Viewer
+<div align="center">
 
-A public-facing web application for browsing and managing board game collections from [BoardGameGeek](https://boardgamegeek.com).
+# 🎲 BBGC — Bekasi Board Game Community Collection Hub
 
-## Features
+**Pool the community's shelves, see what fits the table tonight, and call out the next session.**
 
-✨ **Current (MVP)**
+A felt-table-themed web app that brings a board game community's collections together in one place — browse the whole library, pick who's playing and instantly see which games you can play, and pull any collection straight from BoardGameGeek.
 
-- 🔍 Search any public BoardGameGeek collection by username
-- 📊 View detailed collection statistics (total games, plays, ratings)
-- 🎮 Filter by player count and play time
-- 📈 Sort by BGG rank, community rating, your rating, times played, and more
-- 🌙 Beautiful dark gaming aesthetic UI
-- ⚡ Fast client-side filtering and sorting
-- 📱 Fully responsive (mobile, tablet, desktop)
-- 🔄 Automatic retry on network errors
-- 🎪 Demo mode for testing UI
+[**Live demo →**](https://board-game-collection-viewer.vercel.app)
 
-🚀 **Upcoming**
+![Home](docs/screenshots/home.png)
 
-- 👥 User accounts and authentication
-- 🗓️ Create and manage play sessions
-- 📱 RSVP system for group play events
-- 💬 WhatsApp notifications to play groups
-- 💾 Sync your real BGG collection to database
+</div>
 
-## Quick Start
+---
 
-### Local Development
+## ✨ What it does
+
+| Page | What you get |
+|------|--------------|
+| **Home** | A tile menu into every section, styled like a green felt game table. |
+| **All Collection** (`/all`) | The whole community library — **109 games across 16 members** — with live search, an A–Z index, category filtering, and an owner badge on every game. |
+| **Session Collection** (`/session`) | The **"I'm playing with…"** mechanic: add the players at your table and instantly pool their shelves into one list of games you can actually play tonight — with a toggle to show only games that fit your group size. |
+| **Update Collection** (`/update`) | Enter a BoardGameGeek username to pull that person's owned games straight from BGG. |
+| **Collection view** (`/[username]`) | A clean, sortable view of any BGG collection with summary stats. |
+
+![All Collection](docs/screenshots/all.png)
+
+![Session — "I'm playing with"](docs/screenshots/session.png)
+
+---
+
+## 🧱 Tech stack
+
+- **[Next.js 16](https://nextjs.org)** (App Router) + **React 19** server components
+- **TypeScript** (strict)
+- **Tailwind CSS v4** + a hand-built felt/parchment/gold design system in [`app/globals.css`](app/globals.css)
+- **[Fraunces](https://fonts.google.com/specimen/Fraunces)** display font via `next/font`
+- **BoardGameGeek** XML API + the public `api.geekdo.com` JSON API for high-resolution artwork
+- **[Playwright](https://playwright.dev)** for the data-scraping scripts
+- Deployed free on **[Vercel](https://vercel.com)**
+
+---
+
+## 🚀 Getting started
 
 ```bash
-# Install dependencies
 npm install
-
-# Start dev server
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) in your browser.
+Open [http://localhost:3000](http://localhost:3000).
 
-**Try the demo:** Enter `demo` as the username to see sample data.
+> 💡 On `/update`, try the username **`Deedeen`** to load a real BoardGameGeek collection, or **`demo`** for sample data.
 
-### Build for Production
+### Production build
 
 ```bash
 npm run build
 npm run start
 ```
 
-## Free Hosting
-
-Choose one (all free tier):
-
-1. **Vercel** (Recommended) — Deploy in 2 minutes
-   - Go to [vercel.com](https://vercel.com) → Import GitHub repo → Deploy
-   - See [DEPLOYMENT.md](./DEPLOYMENT.md) for detailed steps
-
-2. **Netlify** — Alternative with similar features
-3. **Railway** — Great for future database needs
-4. **Render** — Simple and straightforward
-
-👉 See [DEPLOYMENT.md](./DEPLOYMENT.md) for full deployment guide and instructions.
-
-## Project Structure
-
-```text
-app/                          # Next.js app router
-├── page.tsx                 # Landing page with search
-├── [username]/
-│   ├── page.tsx            # Collection view
-│   ├── loading.tsx         # Loading skeleton
-│   └── error.tsx           # Error boundary
-└── api/
-    └── collection/[username]/route.ts  # API endpoint
-
-components/                   # React components
-├── SearchForm.tsx           # Homepage search
-├── GameGrid.tsx            # Collection grid with filters
-├── FilterBar.tsx           # Filter controls
-├── GameCard.tsx            # Individual game card
-├── CollectionStats.tsx     # Stats summary
-
-lib/                         # Utilities and APIs
-├── bgg.ts                  # BoardGameGeek API client
-├── types.ts                # TypeScript interfaces
-└── utils.ts                # Helper functions
-```
-
-## Tech Stack
-
-- **Framework:** [Next.js 16](https://nextjs.org) with App Router
-- **Language:** TypeScript
-- **Styling:** Tailwind CSS v4
-- **APIs:** BoardGameGeek XML API
-- **Hosting:** Vercel (free tier)
-- **Database:** (future) Supabase PostgreSQL
-- **Notifications:** (future) Twilio WhatsApp
-
-## Development
-
-### Running Tests
+### Lint
 
 ```bash
-npm run lint          # Run ESLint
-npm run build         # Build for production
+npm run lint
 ```
 
-### Environment Variables (Optional)
+---
 
-For future phases, create `.env.local`:
+## 🗂️ Project structure
 
-```env
-# Supabase (Phase 2)
-NEXT_PUBLIC_SUPABASE_URL=...
-NEXT_PUBLIC_SUPABASE_ANON_KEY=...
+```text
+app/
+├── page.tsx                         # Home — tile menu
+├── all/page.tsx                     # Community collection (A–Z, search, owners)
+├── session/page.tsx                 # "I'm playing with" session builder
+├── update/page.tsx                  # Resync a collection from BGG
+├── schedule/page.tsx                # Upcoming sessions (coming soon)
+├── [username]/                      # View any BGG collection
+│   ├── page.tsx · loading.tsx · error.tsx
+├── api/collection/[username]/route.ts
+└── globals.css                      # Felt/parchment/gold design system
 
-# Twilio WhatsApp (Phase 3)
-TWILIO_ACCOUNT_SID=...
-TWILIO_AUTH_TOKEN=...
+components/
+├── PageHeader.tsx                   # Shared logo bar + back link
+├── CommunityList.tsx                # Search + A–Z index + category filter
+├── GameRow.tsx                      # One parchment game row (crisp image)
+├── SessionBuilder.tsx              # Player picker + pooled-collection logic
+├── CollectionStats.tsx · SearchForm.tsx · ComingSoon.tsx
+
+lib/
+├── community.ts                     # Scraped community data (games + members)
+├── deedeen-collection.ts            # A real scraped BGG collection
+├── collection.ts                    # BGG fetch + retry + demo fallback
+├── bgg.ts · types.ts · utils.ts
+
+scripts/                             # Playwright data-refresh scrapers
+├── scrape-community.mjs             # → lib/community.ts
+├── scrape-collection.mjs · build-deedeen.mjs
 ```
 
-## Known Limitations
+---
 
-- **BGG Authentication:** BoardGameGeek API recently added Bearer token requirement. **Workaround:** Use the `demo` username to test the app with sample data.
-- **Rate Limiting:** BGG API may be slow during peak hours. The app includes automatic retry logic.
+## 🔄 Refreshing the data
 
-## Performance
+The community library is scraped from the live BBGC site and enriched with high-resolution
+artwork (BGG's default thumbnails are only 200×150 and look pixelated — the scraper pulls
+the pre-sized **300×320** image instead so every cover stays crisp).
 
-- ⚡ First page load: ~1-2 seconds
-- 🔄 Collection load: 2-5 seconds (BGG API dependent)
-- 🎯 Filters: Instant (client-side)
-- 📦 Bundle size: ~150KB (Next.js optimized)
+```bash
+# Re-scrape the community collection + members → lib/community.ts
+node scripts/scrape-community.mjs
 
-## Roadmap
+# Re-scrape an individual BGG collection → lib/deedeen-collection.ts
+node scripts/scrape-collection.mjs <bgg-username>
+node scripts/build-deedeen.mjs
+```
 
-- [ ] Phase 1: Collection viewer (MVP) ✅ **Done**
-- [ ] Phase 2: Session scheduling + user accounts
-- [ ] Phase 3: WhatsApp/Email notifications
-- [ ] Phase 4: Collection sync to database
-- [ ] Phase 5: Social features (groups, shared sessions)
+> ℹ️ **Why scraping?** BoardGameGeek's XML API now requires authentication (returns `401`),
+> so collections are gathered via a headless-browser scrape + the public geekdo JSON API and
+> baked into the app as static data.
 
-## Contributing
+---
 
-Found a bug or have a suggestion? Open an issue or pull request!
+## 🗺️ Roadmap
 
-## License
+- [x] Felt-table themed community hub with uniform styling
+- [x] All Collection — search, A–Z index, category filter, owner badges
+- [x] Session builder — "I'm playing with" pooled-collection mechanic
+- [x] High-resolution, non-pixelated game artwork
+- [ ] Persistent sessions & RSVPs (currently UI-only)
+- [ ] Member accounts + self-service collection sync
+- [ ] Schedule page with real upcoming sessions
+- [ ] WhatsApp / email notifications to the play group
 
-MIT — Feel free to use this project for learning or as a template for your own collection manager.
+---
 
-## Resources
+## 📦 Deployment
 
-- [BoardGameGeek](https://boardgamegeek.com) — The source of all board game data
-- [BGG XML API](https://boardgamegeek.com/wiki/page/BGG_XML_API2) — API documentation
-- [Next.js Docs](https://nextjs.org/docs) — Framework documentation
-- [Vercel Deployment](https://vercel.com/docs) — Deployment guide
+Push to `main` and Vercel auto-deploys. To set up from scratch: import the repo at
+[vercel.com](https://vercel.com) — it auto-detects Next.js, zero config required.
+
+---
+
+## 📄 License
+
+MIT — use it for your own community, or as a template for your own collection hub.
+
+## 🙏 Credits
+
+- Board game data & artwork from **[BoardGameGeek](https://boardgamegeek.com)**
+- Inspired by the **[Bekasi Board Game Community](https://bekasiboardgame.my.id)**
