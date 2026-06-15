@@ -77,6 +77,23 @@ Supabase's free tier needs no credit card. Setup takes ~3 minutes:
    > The open policy suits a small private group. Tighten it (require auth, validate fields)
    > if the site becomes public.
 
+   *(Optional, recommended)* Add this function so RSVPs update **atomically** (no lost writes when
+   two people RSVP at the same instant). Without it, the app falls back to a read-modify-write,
+   which is fine for low traffic:
+
+   ```sql
+   create or replace function set_rsvp(p_id uuid, p_name text, p_status text)
+   returns setof sessions language sql as $$
+     update sessions
+     set rsvps = case
+       when p_status = 'clear' then rsvps - p_name
+       else rsvps || jsonb_build_object(p_name, p_status)
+     end
+     where id = p_id
+     returning *;
+   $$;
+   ```
+
 3. In **Project Settings → API**, copy the **Project URL** and the public API key — newer
    projects show a **publishable** key (`sb_publishable_…`); older ones show an **anon** key
    (`eyJ…`). Either works.

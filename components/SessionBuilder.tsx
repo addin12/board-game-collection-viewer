@@ -1,9 +1,24 @@
 'use client'
 
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
 import { CommunityGame } from '@/lib/types'
 import GameRow from './GameRow'
+
+// Format a Date as a local `YYYY-MM-DDTHH:MM` string for <input type=datetime-local>
+function localInput(d: Date): string {
+  const p = (n: number) => String(n).padStart(2, '0')
+  return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}T${p(d.getHours())}:${p(d.getMinutes())}`
+}
+// A sensible default: next 7pm (today, or tomorrow if it's already past 7pm)
+function defaultWhen(now: Date): string {
+  const d = new Date(now)
+  if (d.getHours() >= 19) d.setDate(d.getDate() + 1)
+  d.setHours(19, 0, 0, 0)
+  return localInput(d)
+}
+
+const TIME_OPTIONS = [30, 45, 60, 90, 120, 180]
 
 export default function SessionBuilder({
   members,
@@ -15,15 +30,26 @@ export default function SessionBuilder({
   const [selected, setSelected] = useState<string[]>([])
   const [toAdd, setToAdd] = useState('')
   const [fitGroup, setFitGroup] = useState(false)
+  const [maxTime, setMaxTime] = useState<number | null>(null)
 
   // "Call session" form
   const [host, setHost] = useState('')
   const [date, setDate] = useState('')
+  const [minDate, setMinDate] = useState('')
   const [lockedGameId, setLockedGameId] = useState('')
   const [description, setDescription] = useState('')
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState('')
   const [createdId, setCreatedId] = useState('')
+
+  // Client-only defaults (avoids SSR hydration mismatch on time-dependent values)
+  useEffect(() => {
+    Promise.resolve().then(() => {
+      const now = new Date()
+      setMinDate(localInput(now))
+      setDate(defaultWhen(now))
+    })
+  }, [])
 
   const available = members.filter((m) => !selected.includes(m))
 
@@ -41,9 +67,10 @@ export default function SessionBuilder({
     return games
       .filter((g) => g.owners.some((o) => sel.has(o)))
       .filter((g) => (fitGroup ? g.maxPlayers >= selected.length && g.minPlayers <= selected.length : true))
+      .filter((g) => (maxTime ? !g.maxPlayTime || g.maxPlayTime <= maxTime : true))
       .map((g) => ({ ...g, owners: g.owners.filter((o) => sel.has(o)) }))
       .sort((a, b) => b.communityRating - a.communityRating)
-  }, [games, selected, fitGroup])
+  }, [games, selected, fitGroup, maxTime])
 
   // Host must be one of the players at the table
   const effectiveHost = host && selected.includes(host) ? host : selected[0] ?? ''
@@ -52,6 +79,10 @@ export default function SessionBuilder({
     setError('')
     if (!date) {
       setError('Pick a date and time for the session.')
+      return
+    }
+    if (new Date(date).getTime() < Date.now()) {
+      setError('Pick a date and time in the future.')
       return
     }
     if (!effectiveHost) {
@@ -119,6 +150,23 @@ export default function SessionBuilder({
             Only show games that fit {selected.length} player{selected.length === 1 ? '' : 's'}
           </label>
         )}
+
+        {selected.length > 0 && (
+          <label className="count fitrow">
+            We&apos;ve got
+            <select
+              className="select"
+              aria-label="Time available"
+              value={maxTime ?? ''}
+              onChange={(e) => setMaxTime(e.target.value ? Number(e.target.value) : null)}
+            >
+              <option value="">any amount of time</option>
+              {TIME_OPTIONS.map((t) => (
+                <option key={t} value={t}>~{t < 60 ? `${t} min` : `${t / 60} hr`}</option>
+              ))}
+            </select>
+          </label>
+        )}
       </div>
 
       {selected.length === 0 ? (
@@ -148,7 +196,7 @@ export default function SessionBuilder({
                 <div className="frow">
                   <div className="fcol">
                     <label className="plabel" htmlFor="when">When</label>
-                    <input id="when" type="datetime-local" className="pinput" value={date} onChange={(e) => setDate(e.target.value)} />
+                    <input id="when" type="datetime-local" className="pinput" min={minDate} value={date} onChange={(e) => setDate(e.target.value)} />
                   </div>
                   <div className="fcol">
                     <label className="plabel" htmlFor="host">Called by</label>

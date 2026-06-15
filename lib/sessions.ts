@@ -27,6 +27,12 @@ export interface CreateSessionInput {
   game?: GameRef | null
 }
 
+export interface UpdateSessionInput {
+  date?: string
+  description?: string
+  game?: GameRef | null
+}
+
 const TABLE = 'sessions'
 
 // ---------- in-memory fallback (survives HMR via globalThis) ----------
@@ -121,7 +127,14 @@ export async function setRsvp(
     return s
   }
 
-  // read-modify-write the rsvps map (fine for this app's low traffic)
+  // Prefer the atomic RPC (race-free JSONB merge). Falls back to read-modify-write
+  // if the set_rsvp() function hasn't been created in this project yet.
+  const rpc = await sb.rpc('set_rsvp', { p_id: id, p_name: name, p_status: status })
+  if (!rpc.error) {
+    const rows = (rpc.data as SessionRow[]) ?? []
+    return rows[0] ? rowToSession(rows[0]) : null
+  }
+
   const { data: existing, error: readErr } = await sb.from(TABLE).select('*').eq('id', id).maybeSingle()
   if (readErr) throw new Error(readErr.message)
   if (!existing) return null
@@ -133,4 +146,39 @@ export async function setRsvp(
   const { data, error } = await sb.from(TABLE).update({ rsvps: current }).eq('id', id).select().single()
   if (error) throw new Error(error.message)
   return rowToSession(data as SessionRow)
+}
+
+export async function updateSession(id: string, input: UpdateSessionInput): Promise<GameSession | null> {
+  const patch: { date?: string; description?: string; game?: GameRef | null } = {}
+  if (input.date !== undefined) patch.date = new Date(input.date).toISOString()
+  if (input.description !== undefined) patch.description = input.description.trim()
+  if (input.game !== undefined) patch.game = input.game
+
+  const sb = getSupabase()
+  if (!sb) {
+    const s = memStore.get(id)
+    if (!s) return null
+    if (patch.date !== undefined) s.date = patch.date
+    if (patch.description !== undefined) s.description = patch.description
+    if ('game' in patch) s.game = patch.game ?? null
+    memStore.set(id, s)
+    return s
+  }
+
+  if (Object.keys(patch).length === 0) {
+    const { data } = await sb.from(TABLE).select('*').eq('id', id).maybeSingle()
+    return data ? rowToSession(data as SessionRow) : null
+  }
+  const { data, error } = await sb.from(TABLE).update(patch).eq('id', id).select().maybeSingle()
+  if (error) throw new Error(error.message)
+  return data ? rowToSession(data as SessionRow) : null
+}
+
+export async function deleteSession(id: string): Promise<boolean> {
+  const sb = getSupabase()
+  if (!sb) return memStore.delete(id)
+
+  const { error } = await sb.from(TABLE).delete().eq('id', id)
+  if (error) throw new Error(error.message)
+  return true
 }
