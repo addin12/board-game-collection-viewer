@@ -1,5 +1,5 @@
 import { chromium } from 'playwright'
-import { writeFileSync } from 'fs'
+import { writeFileSync, readFileSync } from 'fs'
 
 const UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/120.0 Safari/537.36'
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms))
@@ -92,7 +92,26 @@ for (let i = 0; i < games.length; i++) {
   await sleep(200)
 }
 
-// ---------- 3. Write the data file ----------
+// ---------- 3. Safety guard: never overwrite good data with a broken scrape ----------
+// If the source site changes or a fetch fails wholesale, refuse to write so a
+// scheduled run can't silently commit an empty/partial collection.
+const MIN_GAMES = 50
+if (enriched.length < MIN_GAMES) {
+  console.error(`\nAborting: scraped only ${enriched.length} games (< ${MIN_GAMES}). Not writing lib/community.ts.`)
+  process.exit(1)
+}
+try {
+  const existing = readFileSync('lib/community.ts', 'utf8')
+  const prev = Number(existing.match(/\/\/ (\d+) games owned/)?.[1])
+  if (prev && enriched.length < prev * 0.75) {
+    console.error(`\nAborting: scraped ${enriched.length} games vs ${prev} previously (>25% drop). Not writing.`)
+    process.exit(1)
+  }
+} catch {
+  /* no existing file — fine */
+}
+
+// ---------- 4. Write the data file ----------
 const file = `import { CommunityGame } from './types'
 
 // Real Barudak Board Game Club collection — scraped from bekasiboardgame.my.id

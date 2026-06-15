@@ -1,0 +1,53 @@
+name: Refresh community data
+
+# Re-scrapes the community collection from bekasiboardgame.my.id, enriches it with
+# high-res artwork, and commits lib/community.ts only if it actually changed.
+# Runs weekly, or on demand from the Actions tab.
+
+on:
+  schedule:
+    - cron: '0 6 * * 1' # every Monday 06:00 UTC
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+concurrency:
+  group: refresh-community
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Scrape community data
+        run: node scripts/scrape-community.mjs
+
+      - name: Commit if changed
+        run: |
+          if [[ -n "$(git status --porcelain lib/community.ts)" ]]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add lib/community.ts
+            git commit -m "chore: refresh community data [skip ci]"
+            git push
+            echo "Committed refreshed community data."
+          else
+            echo "No changes — community data already up to date."
+          fi
