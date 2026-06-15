@@ -3,7 +3,8 @@
 import { useEffect, useRef, useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { GameSession, RsvpStatus } from '@/lib/sessions'
+import type { GameSession, RsvpStatus, GameRef } from '@/lib/sessions'
+import { CommunityGame } from '@/lib/types'
 
 function fmt(iso: string) {
   const d = new Date(iso)
@@ -19,7 +20,13 @@ function localInput(d: Date): string {
   return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}T${p(d.getHours())}:${p(d.getMinutes())}`
 }
 
-export default function SchedulePanel({ members }: { members: string[] }) {
+export default function SchedulePanel({
+  members,
+  games,
+}: {
+  members: string[]
+  games: CommunityGame[]
+}) {
   const [sessions, setSessions] = useState<GameSession[]>([])
   const [loading, setLoading] = useState(true)
   const [me, setMe] = useState('')
@@ -27,8 +34,9 @@ export default function SchedulePanel({ members }: { members: string[] }) {
   const [editingId, setEditingId] = useState('')
   const [editDate, setEditDate] = useState('')
   const [editNote, setEditNote] = useState('')
+  const [editGames, setEditGames] = useState<GameRef[]>([])
+  const [gameQuery, setGameQuery] = useState('')
 
-  // Read the latest editingId inside the polling closure without re-subscribing
   const editingRef = useRef('')
   useEffect(() => { editingRef.current = editingId }, [editingId])
 
@@ -95,6 +103,16 @@ export default function SchedulePanel({ members }: { members: string[] }) {
     setEditingId(s.id)
     setEditDate(localInput(new Date(s.date)))
     setEditNote(s.description)
+    setEditGames(s.games)
+    setGameQuery('')
+  }
+
+  function addEditGame() {
+    const g = games.find((x) => x.name.toLowerCase() === gameQuery.trim().toLowerCase())
+    if (g && !editGames.some((eg) => eg.id === g.id)) {
+      setEditGames([...editGames, { id: g.id, name: g.name, thumbnail: g.thumbnail }])
+      setGameQuery('')
+    }
   }
 
   async function saveEdit(id: string) {
@@ -104,7 +122,7 @@ export default function SchedulePanel({ members }: { members: string[] }) {
       const res = await fetch(`/api/sessions/${id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ date: new Date(editDate).toISOString(), description: editNote }),
+        body: JSON.stringify({ date: new Date(editDate).toISOString(), description: editNote, games: editGames }),
       })
       if (res.ok) {
         const updated: GameSession = await res.json()
@@ -118,6 +136,10 @@ export default function SchedulePanel({ members }: { members: string[] }) {
 
   return (
     <div>
+      <datalist id="allgames">
+        {games.map((g) => <option key={g.id} value={g.name} />)}
+      </datalist>
+
       <div className="controls">
         <div className="field">
           <label htmlFor="me">You are</label>
@@ -156,10 +178,19 @@ export default function SchedulePanel({ members }: { members: string[] }) {
                   <div className="t">{when.time}</div>
                 </div>
                 <div className="sbody">
-                  <div className="sgame">
-                    {s.game && <Image src={s.game.thumbnail} alt={s.game.name} width={40} height={40} />}
-                    {s.game ? s.game.name : 'Game TBD'}
-                  </div>
+                  {s.games.length > 0 ? (
+                    <div className="sgames">
+                      {s.games.map((g) => (
+                        <span className="sgchip" key={g.id}>
+                          {g.thumbnail && <Image src={g.thumbnail} alt={g.name} width={26} height={26} />}
+                          {g.name}
+                        </span>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="sgame">Games TBD</div>
+                  )}
+
                   {s.description && <p className="sdesc">{s.description}</p>}
                   <div className="smeta">
                     Called by <strong>{s.host}</strong>
@@ -189,6 +220,30 @@ export default function SchedulePanel({ members }: { members: string[] }) {
                         value={editNote}
                         onChange={(e) => setEditNote(e.target.value)}
                       />
+                      <div>
+                        {editGames.length > 0 && (
+                          <div className="gchips">
+                            {editGames.map((g) => (
+                              <span className="gchip" key={g.id}>
+                                {g.name}
+                                <button type="button" onClick={() => setEditGames(editGames.filter((x) => x.id !== g.id))} aria-label={`Remove ${g.name}`}>×</button>
+                              </span>
+                            ))}
+                          </div>
+                        )}
+                        <div className="playerrow">
+                          <input
+                            className="pinput"
+                            list="allgames"
+                            placeholder="Add a game…"
+                            aria-label="Add a game"
+                            value={gameQuery}
+                            onChange={(e) => setGameQuery(e.target.value)}
+                            onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); addEditGame() } }}
+                          />
+                          <button type="button" className="iconbtn" onClick={addEditGame} aria-label="Add game" disabled={!gameQuery}>+</button>
+                        </div>
+                      </div>
                       <div className="rsvp">
                         <button type="button" className="minibtn in" disabled={busy === s.id} onClick={() => saveEdit(s.id)}>Save</button>
                         <button type="button" className="minibtn out" onClick={() => setEditingId('')}>Cancel</button>

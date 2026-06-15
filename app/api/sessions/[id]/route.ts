@@ -1,6 +1,13 @@
-import { updateSession, deleteSession } from '@/lib/sessions'
+import { updateSession, deleteSession, GameRef } from '@/lib/sessions'
 
 export const dynamic = 'force-dynamic'
+
+function sanitizeGames(value: unknown): GameRef[] {
+  if (!Array.isArray(value)) return []
+  return value
+    .filter((g): g is GameRef => !!g && typeof g === 'object' && typeof (g as GameRef).id === 'string')
+    .map((g) => ({ id: String(g.id), name: String(g.name ?? ''), thumbnail: String(g.thumbnail ?? '') }))
+}
 
 export async function PATCH(
   req: Request,
@@ -9,12 +16,12 @@ export async function PATCH(
   try {
     const { id } = await params
     const body = await req.json()
-    const { date, description, game } = body ?? {}
+    const { date, description, games } = body ?? {}
 
     const updated = await updateSession(id, {
       ...(typeof date === 'string' ? { date } : {}),
       ...(typeof description === 'string' ? { description } : {}),
-      ...(game !== undefined ? { game: game && typeof game === 'object' ? game : null } : {}),
+      ...(games !== undefined ? { games: sanitizeGames(games) } : {}),
     })
     if (!updated) {
       return Response.json({ error: 'Session not found' }, { status: 404 })

@@ -1,8 +1,9 @@
 'use client'
 
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { CommunityGame } from '@/lib/types'
+import type { GameRef } from '@/lib/sessions'
 import GameRow from './GameRow'
 
 // Format a Date as a local `YYYY-MM-DDTHH:MM` string for <input type=datetime-local>
@@ -36,7 +37,8 @@ export default function SessionBuilder({
   const [host, setHost] = useState('')
   const [date, setDate] = useState('')
   const [minDate, setMinDate] = useState('')
-  const [lockedGameId, setLockedGameId] = useState('')
+  const [gameToAdd, setGameToAdd] = useState('')
+  const [lockedGames, setLockedGames] = useState<GameRef[]>([])
   const [description, setDescription] = useState('')
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState('')
@@ -60,17 +62,26 @@ export default function SessionBuilder({
     }
   }
 
-  // Pool = games owned by any selected player; owner pills trimmed to the table
-  const pool = useMemo(() => {
-    if (selected.length === 0) return []
-    const sel = new Set(selected)
-    return games
-      .filter((g) => g.owners.some((o) => sel.has(o)))
-      .filter((g) => (fitGroup ? g.maxPlayers >= selected.length && g.minPlayers <= selected.length : true))
-      .filter((g) => (maxTime ? !g.maxPlayTime || g.maxPlayTime <= maxTime : true))
-      .map((g) => ({ ...g, owners: g.owners.filter((o) => sel.has(o)) }))
-      .sort((a, b) => b.communityRating - a.communityRating)
-  }, [games, selected, fitGroup, maxTime])
+  function addGame() {
+    const g = pool.find((x) => x.id === gameToAdd)
+    if (g && !lockedGames.some((lg) => lg.id === g.id)) {
+      setLockedGames([...lockedGames, { id: g.id, name: g.name, thumbnail: g.thumbnail }])
+      setGameToAdd('')
+    }
+  }
+
+  // Pool = games owned by any selected player; owner pills trimmed to the table.
+  // Plain computation — the React Compiler memoizes this automatically.
+  const sel = new Set(selected)
+  const pool =
+    selected.length === 0
+      ? []
+      : games
+          .filter((g) => g.owners.some((o) => sel.has(o)))
+          .filter((g) => (fitGroup ? g.maxPlayers >= selected.length && g.minPlayers <= selected.length : true))
+          .filter((g) => (maxTime ? !g.maxPlayTime || g.maxPlayTime <= maxTime : true))
+          .map((g) => ({ ...g, owners: g.owners.filter((o) => sel.has(o)) }))
+          .sort((a, b) => b.communityRating - a.communityRating)
 
   // Host must be one of the players at the table
   const effectiveHost = host && selected.includes(host) ? host : selected[0] ?? ''
@@ -90,7 +101,6 @@ export default function SessionBuilder({
       return
     }
 
-    const locked = pool.find((g) => g.id === lockedGameId)
     setSubmitting(true)
     try {
       const res = await fetch('/api/sessions', {
@@ -101,7 +111,7 @@ export default function SessionBuilder({
           description,
           host: effectiveHost,
           players: selected,
-          game: locked ? { id: locked.id, name: locked.name, thumbnail: locked.thumbnail } : null,
+          games: lockedGames,
         }),
       })
       if (!res.ok) {
@@ -209,13 +219,26 @@ export default function SessionBuilder({
                 </div>
 
                 <div className="fcol">
-                  <label className="plabel" htmlFor="game">Game (optional)</label>
-                  <select id="game" className="pinput" value={lockedGameId} onChange={(e) => setLockedGameId(e.target.value)}>
-                    <option value="">Decide at the table</option>
-                    {pool.map((g) => (
-                      <option key={g.id} value={g.id}>{g.name}</option>
-                    ))}
-                  </select>
+                  <label className="plabel" htmlFor="game">Games (optional — add as many as you like)</label>
+                  <div className="playerrow">
+                    <select id="game" className="pinput" value={gameToAdd} onChange={(e) => setGameToAdd(e.target.value)}>
+                      <option value="">Add a game…</option>
+                      {pool.filter((g) => !lockedGames.some((lg) => lg.id === g.id)).map((g) => (
+                        <option key={g.id} value={g.id}>{g.name}</option>
+                      ))}
+                    </select>
+                    <button type="button" className="iconbtn" onClick={addGame} aria-label="Add game" disabled={!gameToAdd}>+</button>
+                  </div>
+                  {lockedGames.length > 0 && (
+                    <div className="gchips">
+                      {lockedGames.map((g) => (
+                        <span className="gchip" key={g.id}>
+                          {g.name}
+                          <button type="button" onClick={() => setLockedGames(lockedGames.filter((x) => x.id !== g.id))} aria-label={`Remove ${g.name}`}>×</button>
+                        </span>
+                      ))}
+                    </div>
+                  )}
                 </div>
 
                 <div className="fcol">

@@ -1,6 +1,6 @@
 import PageHeader from '@/components/PageHeader'
 import SchedulePanel from '@/components/SchedulePanel'
-import { MEMBERS } from '@/lib/community'
+import { MEMBERS, COMMUNITY_GAMES } from '@/lib/community'
 
 export const metadata = {
   title: 'Schedule',
@@ -18,7 +18,7 @@ export default function SchedulePage() {
         <div className="rule"></div>
       </header>
 
-      <SchedulePanel members={MEMBERS} />
+      <SchedulePanel members={MEMBERS} games={COMMUNITY_GAMES} />
     </div>
   )
 }
