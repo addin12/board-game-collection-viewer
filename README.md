@@ -140,6 +140,7 @@ node scripts/build-deedeen.mjs
 
 Push to `main` and Vercel auto-deploys. To set up from scratch: import the repo at
 [vercel.com](https://vercel.com) — it auto-detects Next.js, zero config required.
+See [DEPLOYMENT.md](DEPLOYMENT.md) for the full guide, including the deployment-checks gotchas.
 
 ---
 
