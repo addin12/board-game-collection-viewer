@@ -31,17 +31,29 @@ export default function HelpPage() {
         <div className="helpcard">
           <h3>🎲 Find a game for tonight</h3>
           <p>
-            In <Link href="/collection?tab=session">Collection → Plan a session</Link>, add who&apos;s at the table under
-            <em> &ldquo;I&apos;m playing with…&rdquo;</em>. It pools everyone&apos;s games into one list. Narrow it
+            In <Link href="/collection?tab=session">Collection → Plan a session</Link>, keep the
+            <strong> &ldquo;Who&apos;s playing?&rdquo;</strong> mode, add who&apos;s at the table under
+            <em> &ldquo;I&apos;m playing with…&rdquo;</em>, and it pools everyone&apos;s games into one list. Narrow it
             with the <em>&ldquo;only games that fit N players&rdquo;</em> and <em>&ldquo;we&apos;ve got ~2 hours&rdquo;</em> filters.
+          </p>
+        </div>
+
+        <div className="helpcard">
+          <h3>🙋 Start from a game</h3>
+          <p>
+            Want to get a specific game going? On <Link href="/collection?tab=session">Plan a session</Link>, switch to
+            <strong> &ldquo;Pick the game(s)&rdquo;</strong>, choose the game(s), then invite a few likely players. They confirm
+            on the schedule — and if everyone you invited bows out, the session <strong>opens to the whole club</strong> so
+            anyone can jump in.
           </p>
         </div>
 
         <div className="helpcard">
           <h3>📣 Call a session</h3>
           <p>
-            On that same tab, set a time and place, pick the game(s) you&apos;re playing, and hit
-            <strong> Call session</strong>. It shows up on the schedule for everyone.
+            Either way, set a time and place, pick the game(s), and hit
+            <strong> Call session</strong>. It shows up on the schedule for everyone, with the
+            <strong> recommended player count</strong> so people know what they&apos;re joining.
           </p>
         </div>
 
