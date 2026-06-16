@@ -27,6 +27,20 @@ A felt-table-themed web app that brings a board game community's collections tog
 
 ---
 
+## 🎮 How to use it (for club members)
+
+No accounts, no passwords — just open the site and go.
+
+- **Browse the whole shelf** → **All Collection**. Search by name, jump with the A–Z index, or use the dropdowns to filter by **category** or by **member** ("show me everything Noah owns").
+- **Find a game for tonight** → **Session Collection**. Add who's at the table under *"I'm playing with…"*, and it pools everyone's games into one list. Narrow it with the *"only games that fit N players"* and *"we've got ~2 hours"* filters.
+- **Call a session** → on that same page, set a time, place, and the game(s) you're playing, then **Call session**.
+- **RSVP** → **Schedule** → pick your name under *"You are"*, then hit **I'm in / Maybe / Can't make it** on any session. You can also tap **add to calendar**. The person who called a session can **Edit** or **Cancel** it. Past game nights live under **Show past sessions**.
+- **See the club's stats** → **Community Stats**: biggest collectors, most-owned games, and one-of-a-kind titles.
+
+> Tip: your name is remembered on each device, so you only pick it once.
+
+---
+
 ## 🧱 Tech stack
 
 - **[Next.js 16](https://nextjs.org)** (App Router) + **React 19** server components
