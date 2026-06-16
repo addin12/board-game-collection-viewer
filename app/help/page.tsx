@@ -10,6 +10,7 @@ export default function HelpPage() {
     <div className="wrap">
       <PageHeader />
 
+      <main id="main">
       <header className="hero">
         <div className="eyebrow">Help</div>
         <h1>How it works</h1>
@@ -74,6 +75,7 @@ export default function HelpPage() {
       </div>
 
       <p className="sectionsub">Tip: your name is remembered on each device, so you only pick it once.</p>
+      </main>
     </div>
   )
 }

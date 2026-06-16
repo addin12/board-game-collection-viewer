@@ -12,6 +12,7 @@ export default async function SchedulePage() {
     <div className="wrap">
       <PageHeader />
 
+      <main id="main">
       <header className="hero">
         <div className="eyebrow">Schedule</div>
         <h1>Upcoming sessions</h1>
@@ -20,6 +21,7 @@ export default async function SchedulePage() {
       </header>
 
       <SchedulePanel members={members} games={games} />
+      </main>
     </div>
   )
 }

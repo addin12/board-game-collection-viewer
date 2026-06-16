@@ -321,4 +321,21 @@ body::before{
 .skeleton-stat{height:84px}
 .skeleton-row{height:88px}
 
-@media(prefers-reduced-motion:reduce){.tile,.tile .go{transition:none}}
+/* skip-to-content link — visually hidden until keyboard-focused */
+.skip{position:absolute; left:8px; top:-48px; z-index:200;
+  background:linear-gradient(180deg,var(--gold),var(--gold-deep)); color:#2a1c06;
+  font-family:var(--sans); font-weight:700; font-size:14px; text-decoration:none;
+  padding:10px 16px; border-radius:10px; transition:top .15s ease}
+.skip:focus{top:8px; outline:2px solid #f7e6c8; outline-offset:2px}
+
+/* Larger tap targets on touch devices (the A–Z index and pagers are small on desktop by design) */
+@media(pointer:coarse){
+  .alpha button{min-height:40px; padding:8px 12px}
+  .tab{min-height:44px; display:inline-flex; align-items:center}
+  .pgbtn{min-height:44px}
+}
+
+@media(prefers-reduced-motion:reduce){
+  .tile,.tile .go,.tab,.btn,.pgbtn,.alpha button,.backlink,.skip,.gname,.search input{transition:none}
+  html{scroll-behavior:auto}
+}

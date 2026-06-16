@@ -31,6 +31,7 @@ export default async function CommunityStatsPage() {
     <div className="wrap">
       <PageHeader />
 
+      <main id="main">
       <header className="hero">
         <div className="eyebrow">Community Stats</div>
         <h1>By the numbers</h1>
@@ -74,6 +75,7 @@ export default async function CommunityStatsPage() {
       <div className="glist">
         {rare.slice(0, 12).map((g) => <GameRow key={g.id} game={g} showOwners />)}
       </div>
+      </main>
     </div>
   )
 }

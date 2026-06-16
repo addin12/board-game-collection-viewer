@@ -50,6 +50,7 @@ export default async function CollectionPage({
     <div className="wrap">
       <PageHeader />
 
+      <main id="main">
       <header className="hero">
         <div className="eyebrow">Collection</div>
         <h1>{username}&apos;s shelf</h1>
@@ -65,6 +66,7 @@ export default async function CollectionPage({
           <CommunityList games={listGames} />
         </>
       )}
+      </main>
     </div>
   )
 }

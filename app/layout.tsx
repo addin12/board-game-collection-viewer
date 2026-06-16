@@ -37,7 +37,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${fraunces.variable} h-full antialiased`}>
-      <body>{children}</body>
+      <body>
+        <a href="#main" className="skip">Skip to content</a>
+        {children}
+      </body>
     </html>
   );
 }

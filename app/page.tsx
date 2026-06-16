@@ -14,6 +14,7 @@ export default function Home() {
         <div className="wordmark">B<span>B</span>GC</div>
       </div>
 
+      <main id="main">
       <header className="hero">
         <div className="eyebrow">Welcome</div>
         <h1>Barudak Board Game Club</h1>
@@ -46,10 +47,11 @@ export default function Home() {
           <span className="go" aria-hidden="true">→</span>
         </Link>
       </nav>
+      </main>
 
       <footer className="foot">
         <span className="v">BBGC Collection v0.7.5</span>
-        <span>©2022–2024 Barudak Board Game Club</span>
+        <span>©2022–2026 Barudak Board Game Club</span>
       </footer>
     </div>
   )

@@ -41,7 +41,9 @@ export default function CommunityList({
   }
   function goToPage(next: number) {
     setPage(next)
-    listTop.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    // Respect users who've asked for less motion — jump instead of animating.
+    const reduce = typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    listTop.current?.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' })
   }
 
   const categories = useMemo(() => {
@@ -78,6 +80,7 @@ export default function CommunityList({
         <div className="row">
           <input
             className="input grow-input"
+            aria-label="Search games"
             placeholder="Search games…"
             value={query}
             onChange={(e) => {

@@ -19,6 +19,7 @@ export default async function CollectionPage({
     <div className="wrap">
       <PageHeader />
 
+      <main id="main">
       <header className="hero">
         <div className="eyebrow">Collection</div>
         <h1>The club&apos;s shelf</h1>
@@ -27,6 +28,7 @@ export default async function CollectionPage({
       </header>
 
       <CollectionTabs members={members} games={games} initialTab={initialTab} />
+      </main>
     </div>
   )
 }
