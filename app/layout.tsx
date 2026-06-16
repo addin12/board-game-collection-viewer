@@ -8,12 +8,26 @@ const fraunces = Fraunces({
   weight: ["500", "600", "700"],
 });
 
+const DESCRIPTION = "Boardgamers' Planet — the Barudak Board Game Club collection hub.";
+
 export const metadata: Metadata = {
+  metadataBase: new URL('https://board-game-collection-viewer.vercel.app'),
   title: {
     template: '%s | BBGC',
     default: 'BBGC — Barudak Board Game Club',
   },
-  description: "Boardgamers' Planet — the Barudak Board Game Club collection hub.",
+  description: DESCRIPTION,
+  openGraph: {
+    title: 'BBGC — Barudak Board Game Club',
+    description: DESCRIPTION,
+    siteName: 'BBGC',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'BBGC — Barudak Board Game Club',
+    description: DESCRIPTION,
+  },
 };
 
 export default function RootLayout({
