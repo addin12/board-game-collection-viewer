@@ -324,6 +324,21 @@ body::before{
 .pool-count{margin-top:18px}
 .panel.full{max-width:none}
 .session-call{margin-top:22px}
+
+/* plan-a-session mode toggle */
+.segmented{display:inline-flex; gap:4px; margin-top:22px; padding:4px;
+  background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.1); border-radius:12px}
+.seg{font-family:var(--sans); font-size:14px; font-weight:700; cursor:pointer;
+  padding:9px 16px; border-radius:9px; border:0; background:none; color:#9fb3a4; transition:color .12s, background .12s}
+.seg:hover{color:#eae3d2}
+.seg.is-active{color:#2a1c06; background:linear-gradient(180deg,var(--gold),var(--gold-deep))}
+.seg:focus-visible{outline:2px solid var(--gold); outline-offset:2px}
+.segsub{font-size:14px; color:#b6c8bb; margin:12px 0 0}
+
+/* "open to the club" banner on a session card */
+.sopen{display:inline-block; margin-top:8px; font-size:13px; font-weight:700;
+  color:var(--gold-deep); background:rgba(200,144,52,.16);
+  border:1px solid rgba(200,144,52,.38); border-radius:999px; padding:4px 12px}
 .errid{font-size:12px; opacity:.6}
 .search .backlink{align-self:center}
 /* loading skeletons */
@@ -345,9 +360,10 @@ body::before{
   .tab{min-height:44px; display:inline-flex; align-items:center}
   .pgbtn{min-height:44px}
   .topnav a.navlink{min-height:40px}
+  .seg{min-height:44px}
 }
 
 @media(prefers-reduced-motion:reduce){
-  .tile,.tile .go,.tab,.btn,.pgbtn,.alpha button,.backlink,.skip,.gname,.search input,.topnav a.navlink{transition:none}
+  .tile,.tile .go,.tab,.btn,.pgbtn,.alpha button,.backlink,.skip,.gname,.search input,.topnav a.navlink,.seg{transition:none}
   html{scroll-behavior:auto}
 }

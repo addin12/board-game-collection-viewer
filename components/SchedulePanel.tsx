@@ -184,6 +184,17 @@ export default function SchedulePanel({
     }
   }
 
+  // Look up community player-counts by game id to show "best with N players".
+  const gamesById = new Map(games.map((g) => [g.id, g]))
+  function recRange(s: GameSession): string | null {
+    const objs = s.games.map((g) => gamesById.get(g.id)).filter((g): g is CommunityGame => !!g)
+    if (!objs.length) return null
+    const lo = Math.min(...objs.map((g) => g.minPlayers || 1))
+    const hi = Math.max(...objs.map((g) => g.maxPlayers || 1))
+    if (!hi) return null
+    return lo === hi ? `${lo}` : `${lo}–${hi}`
+  }
+
   return (
     <div>
       <datalist id="allgames">
@@ -220,6 +231,11 @@ export default function SchedulePanel({
             const myStatus = me ? s.rsvps[me] : undefined
             const isHost = !!me && me === s.host
             const editing = editingId === s.id
+            // A game-first invite "opens up" once every pre-invited player (besides
+            // the host) has declined — or if nobody was pre-invited at all.
+            const invitedOthers = s.players.filter((p) => p !== s.host)
+            const opened = invitedOthers.length === 0 || invitedOthers.every((p) => s.rsvps[p] === 'out')
+            const rec = recRange(s)
 
             return (
               <div className="scard" key={s.id}>
@@ -242,10 +258,15 @@ export default function SchedulePanel({
                     <div className="sgame">Games TBD</div>
                   )}
 
+                  {opened && (
+                    <div className="sopen">✋ Open to the club — anyone can jump in</div>
+                  )}
+
                   {s.location && <p className="sloc">📍 {s.location}</p>}
                   {s.description && <p className="sdesc">{s.description}</p>}
                   <div className="smeta">
                     Called by <strong>{s.host}</strong>
+                    {rec && <> · best with {rec} players</>}
                     {s.players.length > 0 && <> · table of {s.players.length}</>}
                     {' · '}{ins.length} going
                     {maybes.length > 0 && <> · {maybes.length} maybe</>}
