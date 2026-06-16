@@ -1,6 +1,17 @@
+'use client'
+
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
+
+const LINKS = [
+  { href: '/collection', label: 'Collection' },
+  { href: '/schedule', label: 'Schedule' },
+  { href: '/community', label: 'Community' },
+  { href: '/help', label: 'Help' },
+]
 
 export default function PageHeader() {
+  const pathname = usePathname()
   return (
     <div className="bar between">
       <Link href="/" aria-label="BBGC home">
@@ -9,7 +20,20 @@ export default function PageHeader() {
         </svg>
         <div className="wordmark">B<span>B</span>GC</div>
       </Link>
-      <Link className="backlink" href="/">← Menu</Link>
+
+      <nav className="topnav" aria-label="Primary">
+        {LINKS.map((l) => {
+          const active = pathname === l.href || pathname.startsWith(l.href + '/')
+          // Spread aria-current so the attribute is simply absent when inactive
+          // (avoids a bare aria-*={expr} the IDE flags as a false positive).
+          const current = active ? { 'aria-current': 'page' as const } : {}
+          return (
+            <Link key={l.href} href={l.href} className={active ? 'navlink is-active' : 'navlink'} {...current}>
+              {l.label}
+            </Link>
+          )
+        })}
+      </nav>
     </div>
   )
 }

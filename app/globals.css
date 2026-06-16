@@ -30,7 +30,7 @@ body::before{
 .wrap{position:relative; z-index:1; max-width:1000px; margin:0 auto; padding:30px 20px 56px}
 
 /* ---------- top bar ---------- */
-.bar{display:flex; align-items:center; gap:12px}
+.bar{display:flex; align-items:center; gap:12px; flex-wrap:wrap}
 .bar a{display:flex; align-items:center; gap:12px; text-decoration:none}
 .mark{width:38px; height:38px; flex:0 0 auto}
 .mark path{fill:var(--gold)}
@@ -309,6 +309,17 @@ body::before{
 
 /* ---------- helpers ---------- */
 .bar.between{justify-content:space-between}
+
+/* ---------- primary nav (inner pages) ---------- */
+.topnav{display:flex; gap:4px; flex-wrap:wrap; align-items:center}
+.topnav a.navlink{
+  display:inline-flex; align-items:center; gap:0;
+  font-family:var(--sans); font-size:14px; font-weight:600; color:#9fb3a4; text-decoration:none;
+  padding:7px 12px; border-radius:8px; transition:color .12s, background .12s;
+}
+.topnav a.navlink:hover{color:#eae3d2; background:rgba(255,255,255,.06)}
+.topnav a.navlink.is-active{color:#f7e6c8; background:rgba(200,144,52,.16)}
+.topnav a.navlink:focus-visible{outline:2px solid var(--gold); outline-offset:2px}
 .fitrow{display:flex; gap:8px; align-items:center; cursor:pointer}
 .pool-count{margin-top:18px}
 .panel.full{max-width:none}
@@ -333,9 +344,10 @@ body::before{
   .alpha button{min-height:40px; padding:8px 12px}
   .tab{min-height:44px; display:inline-flex; align-items:center}
   .pgbtn{min-height:44px}
+  .topnav a.navlink{min-height:40px}
 }
 
 @media(prefers-reduced-motion:reduce){
-  .tile,.tile .go,.tab,.btn,.pgbtn,.alpha button,.backlink,.skip,.gname,.search input{transition:none}
+  .tile,.tile .go,.tab,.btn,.pgbtn,.alpha button,.backlink,.skip,.gname,.search input,.topnav a.navlink{transition:none}
   html{scroll-behavior:auto}
 }
