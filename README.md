@@ -29,7 +29,7 @@ A felt-table-themed web app that brings a board game community's collections tog
 
 ## 🎮 How to use it (for club members)
 
-No accounts, no passwords — just open the site and go.
+No accounts, no passwords — just open the site and go. *(This guide is also built into the site at **`/help`**.)*
 
 - **Browse the whole shelf** → **All Collection**. Search by name, jump with the A–Z index, or use the dropdowns to filter by **category** or by **member** ("show me everything Noah owns").
 - **Find a game for tonight** → **Session Collection**. Add who's at the table under *"I'm playing with…"*, and it pools everyone's games into one list. Narrow it with the *"only games that fit N players"* and *"we've got ~2 hours"* filters.

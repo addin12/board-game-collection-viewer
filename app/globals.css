@@ -9,7 +9,7 @@
   --display:var(--font-fraunces),Georgia,"Times New Roman",serif;
   --sans:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
   /* token colors echo the dashboards' player palette */
-  --c-session:#d64545; --c-all:#2f80b8; --c-update:#3f9b54; --c-sched:#e3b23c; --c-stats:#8b5cf6;
+  --c-session:#d64545; --c-all:#2f80b8; --c-update:#3f9b54; --c-sched:#e3b23c; --c-stats:#8b5cf6; --c-help:#5b9aa0;
 }
 
 *{box-sizing:border-box}
@@ -63,6 +63,7 @@ body::before{
 .tile.t-update{--accent:var(--c-update); --accent-soft:rgba(63,155,84,.16)}
 .tile.t-sched{--accent:var(--c-sched); --accent-soft:rgba(227,178,60,.16)}
 .tile.t-stats{--accent:var(--c-stats); --accent-soft:rgba(139,92,246,.16)}
+.tile.t-help{--accent:var(--c-help); --accent-soft:rgba(91,154,160,.16)}
 .ic{flex:0 0 auto; width:42px; height:42px; border-radius:10px; display:grid; place-items:center;
     background:var(--accent-soft, rgba(200,144,52,.16))}
 .ic svg{width:24px; height:24px; stroke:var(--accent); fill:none; stroke-width:1.7; stroke-linecap:round; stroke-linejoin:round}
@@ -262,6 +263,15 @@ body::before{
 .editform{display:flex; flex-direction:column; gap:10px; margin-top:12px}
 .pastwrap{margin-top:28px}
 .scard.past{opacity:.82}
+
+/* ---------- help ---------- */
+.helpgrid{display:flex; flex-direction:column; gap:14px; margin-top:22px}
+.helpcard{background:linear-gradient(180deg,var(--parchment),var(--parchment2)); color:var(--ink);
+  border-radius:14px; padding:18px 20px; box-shadow:0 8px 20px rgba(0,0,0,.22); border:1px solid rgba(0,0,0,.06)}
+.helpcard h3{font-family:var(--display); font-weight:600; font-size:17px; margin:0 0 6px; color:var(--ink)}
+.helpcard p{margin:0; font-size:14.5px; color:var(--ink-soft); line-height:1.55}
+.helpcard a{color:var(--gold-deep); font-weight:700}
+.helpcard a:hover{text-decoration:underline}
 
 /* ---------- community stats ---------- */
 .sectionhead{font-family:var(--display); font-weight:600; font-size:24px; color:#f7e6c8; margin:34px 0 0}

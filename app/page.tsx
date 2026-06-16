@@ -51,6 +51,12 @@ export default function Home() {
           <span className="body"><h2>Community Stats</h2><p>Biggest collectors and the club&apos;s favourite games.</p></span>
           <span className="go" aria-hidden="true">→</span>
         </Link>
+
+        <Link className="tile t-help" href="/help">
+          <span className="ic" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" /><path d="M9.5 9a2.5 2.5 0 0 1 4.5 1.5c0 1.5-2 2-2 3" /><circle cx="12" cy="16.5" r="0.6" fill="currentColor" stroke="none" /></svg></span>
+          <span className="body"><h2>Help</h2><p>How to use the site — for new members.</p></span>
+          <span className="go" aria-hidden="true">→</span>
+        </Link>
       </nav>
 
       <footer className="foot">
