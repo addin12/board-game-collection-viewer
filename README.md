@@ -4,7 +4,7 @@
 
 A felt-table-themed web app that brings a board game community's collections together in one place — browse the whole library, pick who's playing and instantly see which games you can play, and pull any collection straight from BoardGameGeek.
 
-[**Live demo →**](https://board-game-collection-viewer.vercel.app)
+[**Live demo →**](https://board-game-club-hub.vercel.app)
 
 ![Home](docs/screenshots/home.png)
 

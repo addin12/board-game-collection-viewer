@@ -11,7 +11,7 @@ const fraunces = Fraunces({
 const DESCRIPTION = "Boardgamers' Planet — the Barudak Board Game Club collection hub.";
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://board-game-collection-viewer.vercel.app'),
+  metadataBase: new URL('https://board-game-club-hub.vercel.app'),
   title: {
     template: '%s | BBGC',
     default: 'BBGC — Barudak Board Game Club',
