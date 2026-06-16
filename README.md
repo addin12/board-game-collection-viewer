@@ -15,10 +15,9 @@ A felt-table-themed web app that brings a board game community's collections tog
 | Page | What you get |
 | ---- | ------------ |
 | **Home** | A tile menu into every section, styled like a green felt game table. |
-| **All Collection** (`/all`) | The whole community library — **109 games across 16 members** — with live search, an A–Z index, category filtering, and an owner badge on every game. |
-| **Session Collection** (`/session`) | The **"I'm playing with…"** mechanic: add the players at your table, pool their shelves into one list of games you can play tonight (with a group-size filter), then **call a session** — lock a time, host, and game. |
-| **Schedule** (`/schedule`) | Upcoming sessions with **RSVP** — pick your name, mark yourself *in* or *out*, and see who else is coming. |
-| **Update Collection** (`/update`) | Enter a BoardGameGeek username to pull that person's owned games straight from BGG. |
+| **Collection** (`/collection`) | One page, three tabs: **Browse all** (the whole **109-game / 16-member** library with search, A–Z index, and category/member filters), **Plan a session** (the *"I'm playing with…"* pooled-collection mechanic → call a session), and **Add from BGG** (pull a BoardGameGeek username's owned games). |
+| **Schedule** (`/schedule`) | Upcoming sessions with **RSVP** (in / maybe / out), a pending tracker, host edit/cancel, add-to-calendar, and a past-sessions log. |
+| **Community Stats** (`/community`) | Biggest collectors, most-owned games, and one-of-a-kind titles. |
 | **Collection view** (`/[username]`) | A clean, sortable view of any BGG collection with summary stats. |
 
 ![All Collection](docs/screenshots/all.png)
@@ -31,9 +30,9 @@ A felt-table-themed web app that brings a board game community's collections tog
 
 No accounts, no passwords — just open the site and go. *(This guide is also built into the site at **`/help`**.)*
 
-- **Browse the whole shelf** → **All Collection**. Search by name, jump with the A–Z index, or use the dropdowns to filter by **category** or by **member** ("show me everything Noah owns").
-- **Find a game for tonight** → **Session Collection**. Add who's at the table under *"I'm playing with…"*, and it pools everyone's games into one list. Narrow it with the *"only games that fit N players"* and *"we've got ~2 hours"* filters.
-- **Call a session** → on that same page, set a time, place, and the game(s) you're playing, then **Call session**.
+- **Browse the whole shelf** → **Collection → Browse all**. Search by name, jump with the A–Z index, or use the dropdowns to filter by **category** or by **member** ("show me everything Noah owns").
+- **Find a game for tonight** → **Collection → Plan a session**. Add who's at the table under *"I'm playing with…"*, and it pools everyone's games into one list. Narrow it with the *"only games that fit N players"* and *"we've got ~2 hours"* filters.
+- **Call a session** → on that same tab, set a time, place, and the game(s) you're playing, then **Call session**.
 - **RSVP** → **Schedule** → pick your name under *"You are"*, then hit **I'm in / Maybe / Can't make it** on any session. You can also tap **add to calendar**. The person who called a session can **Edit** or **Cancel** it. Past game nights live under **Show past sessions**.
 - **See the club's stats** → **Community Stats**: biggest collectors, most-owned games, and one-of-a-kind titles.
 

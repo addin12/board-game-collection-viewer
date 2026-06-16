@@ -206,7 +206,7 @@ export default function SchedulePanel({
         <div className="empty">Loading sessions…</div>
       ) : sessions.length === 0 ? (
         <div className="empty">
-          No upcoming sessions yet. <Link className="backlink" href="/session">Call one →</Link>
+          No upcoming sessions yet. <Link className="backlink" href="/collection?tab=session">Call one →</Link>
         </div>
       ) : (
         <div className="sessions">

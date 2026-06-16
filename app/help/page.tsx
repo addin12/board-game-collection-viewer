@@ -21,16 +21,16 @@ export default function HelpPage() {
         <div className="helpcard">
           <h3>🔍 Browse the shelf</h3>
           <p>
-            Open <Link href="/all">All Collection</Link>. Search by name, jump with the A–Z index, or use the
-            dropdowns to filter by <strong>category</strong> or by <strong>member</strong> — &ldquo;show me
-            everything Noah owns.&rdquo;
+            Open <Link href="/collection">Collection</Link> → the <strong>Browse all</strong> tab. Search by name, jump
+            with the A–Z index, or use the dropdowns to filter by <strong>category</strong> or by <strong>member</strong>
+            — &ldquo;show me everything Noah owns.&rdquo;
           </p>
         </div>
 
         <div className="helpcard">
           <h3>🎲 Find a game for tonight</h3>
           <p>
-            Go to <Link href="/session">Session Collection</Link> and add who&apos;s at the table under
+            In <Link href="/collection?tab=session">Collection → Plan a session</Link>, add who&apos;s at the table under
             <em> &ldquo;I&apos;m playing with…&rdquo;</em>. It pools everyone&apos;s games into one list. Narrow it
             with the <em>&ldquo;only games that fit N players&rdquo;</em> and <em>&ldquo;we&apos;ve got ~2 hours&rdquo;</em> filters.
           </p>
@@ -39,7 +39,7 @@ export default function HelpPage() {
         <div className="helpcard">
           <h3>📣 Call a session</h3>
           <p>
-            On that same page, set a time and place, pick the game(s) you&apos;re playing, and hit
+            On that same tab, set a time and place, pick the game(s) you&apos;re playing, and hit
             <strong> Call session</strong>. It shows up on the schedule for everyone.
           </p>
         </div>

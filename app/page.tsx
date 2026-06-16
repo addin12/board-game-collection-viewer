@@ -22,21 +22,9 @@ export default function Home() {
       </header>
 
       <nav className="grid">
-        <Link className="tile t-session" href="/session">
-          <span className="ic" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="7.5" cy="7.5" r="1" /><circle cx="12" cy="12" r="1" /><circle cx="16.5" cy="16.5" r="1" /><rect x="3" y="3" width="18" height="18" rx="4" /></svg></span>
-          <span className="body"><h2>Session Collection</h2><p>View an individual collection and call out a session.</p></span>
-          <span className="go" aria-hidden="true">→</span>
-        </Link>
-
-        <Link className="tile t-all" href="/all">
+        <Link className="tile t-all" href="/collection">
           <span className="ic" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="4" y="3" width="4.5" height="18" rx="1" /><rect x="9.5" y="3" width="4.5" height="18" rx="1" /><path d="M16 4.5l3.8 1 3.2 16.2-4 .8" /></svg></span>
-          <span className="body"><h2>All Collection</h2><p>View the community&apos;s entire collection.</p></span>
-          <span className="go" aria-hidden="true">→</span>
-        </Link>
-
-        <Link className="tile t-update" href="/update">
-          <span className="ic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M20 11a8 8 0 1 0-.6 4" /><path d="M20 5v4h-4" /></svg></span>
-          <span className="body"><h2>Update Collection</h2><p>Resync your individual collection from BGG.</p></span>
+          <span className="body"><h2>Collection</h2><p>Browse the shelf, plan a game night, or add a collection from BGG.</p></span>
           <span className="go" aria-hidden="true">→</span>
         </Link>
 
