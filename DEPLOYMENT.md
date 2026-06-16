@@ -7,7 +7,7 @@ GitHub.
 ## Deploy to Vercel
 
 1. Go to [vercel.com](https://vercel.com) and sign in with GitHub.
-2. **New Project** → import `board-game-collection-viewer`.
+2. **New Project** → import `board-game-club-hub`.
 3. Leave the defaults — Vercel auto-detects Next.js (build `next build`, output `.next`).
 4. **Deploy**. The site is live in ~30s, with automatic HTTPS.
 
