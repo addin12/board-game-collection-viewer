@@ -45,6 +45,12 @@ export default function Home() {
           <span className="body"><h2>Schedule</h2><p>View the upcoming session schedule.</p></span>
           <span className="go" aria-hidden="true">→</span>
         </Link>
+
+        <Link className="tile t-stats" href="/community">
+          <span className="ic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2" /></svg></span>
+          <span className="body"><h2>Community Stats</h2><p>Biggest collectors and the club&apos;s favourite games.</p></span>
+          <span className="go" aria-hidden="true">→</span>
+        </Link>
       </nav>
 
       <footer className="foot">

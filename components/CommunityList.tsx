@@ -27,10 +27,17 @@ export default function CommunityList({
   const [query, setQuery] = useState('')
   const [range, setRange] = useState<string | null>(null)
   const [category, setCategory] = useState('')
+  const [member, setMember] = useState('')
 
   const categories = useMemo(() => {
     const set = new Set<string>()
     games.forEach((g) => g.categories.forEach((c) => set.add(c)))
+    return Array.from(set).sort()
+  }, [games])
+
+  const members = useMemo(() => {
+    const set = new Set<string>()
+    games.forEach((g) => g.owners.forEach((o) => set.add(o)))
     return Array.from(set).sort()
   }, [games])
 
@@ -41,8 +48,9 @@ export default function CommunityList({
       .filter((g) => (q ? g.name.toLowerCase().includes(q) : true))
       .filter((g) => (r ? r.test(g.name[0]?.toUpperCase() || '#') : true))
       .filter((g) => (category ? g.categories.includes(category) : true))
+      .filter((g) => (member ? g.owners.includes(member) : true))
       .sort((a, b) => a.name.localeCompare(b.name))
-  }, [games, query, range, category])
+  }, [games, query, range, category, member])
 
   return (
     <div>
@@ -54,6 +62,14 @@ export default function CommunityList({
             value={query}
             onChange={(e) => setQuery(e.target.value)}
           />
+          {members.length > 0 && (
+            <select className="select" aria-label="Filter by member" value={member} onChange={(e) => setMember(e.target.value)}>
+              <option value="">All members</option>
+              {members.map((m) => (
+                <option key={m} value={m}>{m}&apos;s games</option>
+              ))}
+            </select>
+          )}
           {categories.length > 0 && (
             <select className="select" aria-label="Filter by category" value={category} onChange={(e) => setCategory(e.target.value)}>
               <option value="">All categories</option>

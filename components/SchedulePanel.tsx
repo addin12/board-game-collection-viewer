@@ -55,6 +55,8 @@ export default function SchedulePanel({
   const [editPlayers, setEditPlayers] = useState<string[]>([])
   const [gameQuery, setGameQuery] = useState('')
   const [playerToAdd, setPlayerToAdd] = useState('')
+  const [past, setPast] = useState<GameSession[] | null>(null)
+  const [pastLoading, setPastLoading] = useState(false)
 
   const editingRef = useRef('')
   useEffect(() => { editingRef.current = editingId }, [editingId])
@@ -141,6 +143,19 @@ export default function SchedulePanel({
     if (playerToAdd && !editPlayers.includes(playerToAdd)) {
       setEditPlayers([...editPlayers, playerToAdd])
       setPlayerToAdd('')
+    }
+  }
+
+  async function loadPast() {
+    setPastLoading(true)
+    try {
+      const res = await fetch('/api/sessions?scope=past')
+      const data = await res.json()
+      setPast(Array.isArray(data) ? data : [])
+    } catch {
+      setPast([])
+    } finally {
+      setPastLoading(false)
     }
   }
 
@@ -322,6 +337,56 @@ export default function SchedulePanel({
           })}
         </div>
       )}
+
+      <div className="pastwrap">
+        {past === null ? (
+          <button type="button" className="linkbtn" onClick={loadPast} disabled={pastLoading}>
+            {pastLoading ? 'Loading…' : '▾ Show past sessions'}
+          </button>
+        ) : past.length === 0 ? (
+          <div className="empty">No past sessions yet.</div>
+        ) : (
+          <>
+            <h2 className="sectionhead">Past sessions</h2>
+            <div className="sessions">
+              {past.map((s) => {
+                const when = fmt(s.date)
+                const ins = Object.entries(s.rsvps).filter(([, v]) => v === 'in').map(([n]) => n)
+                const maybes = Object.entries(s.rsvps).filter(([, v]) => v === 'maybe').map(([n]) => n)
+                return (
+                  <div className="scard past" key={s.id}>
+                    <div className="when">
+                      <div className="d">{when.day}</div>
+                      <div className="m">{when.mon}</div>
+                    </div>
+                    <div className="sbody">
+                      {s.games.length > 0 ? (
+                        <div className="sgames">
+                          {s.games.map((g) => (
+                            <span className="sgchip" key={g.id}>
+                              {g.thumbnail && <Image src={g.thumbnail} alt={g.name} width={26} height={26} />}
+                              {g.name}
+                            </span>
+                          ))}
+                        </div>
+                      ) : (
+                        <div className="sgame">Games TBD</div>
+                      )}
+                      {s.location && <p className="sloc">📍 {s.location}</p>}
+                      {s.description && <p className="sdesc">{s.description}</p>}
+                      <div className="smeta">Called by <strong>{s.host}</strong> · {ins.length} played</div>
+                      <div className="attend">
+                        {ins.map((n) => <span className="apill" key={n}>{n}</span>)}
+                        {maybes.map((n) => <span className="apill maybe" key={n}>{n}?</span>)}
+                      </div>
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+          </>
+        )}
+      </div>
     </div>
   )
 }

@@ -10,9 +10,10 @@ function sanitizeGames(value: unknown): GameRef[] {
     .map((g) => ({ id: String(g.id), name: String(g.name ?? ''), thumbnail: String(g.thumbnail ?? '') }))
 }
 
-export async function GET() {
+export async function GET(req: Request) {
   try {
-    const sessions = await listSessions()
+    const scope = new URL(req.url).searchParams.get('scope') === 'past' ? 'past' : 'upcoming'
+    const sessions = await listSessions(scope)
     return Response.json(sessions)
   } catch (error) {
     console.error('[GET /api/sessions]', error)

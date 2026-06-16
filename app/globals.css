@@ -9,7 +9,7 @@
   --display:var(--font-fraunces),Georgia,"Times New Roman",serif;
   --sans:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
   /* token colors echo the dashboards' player palette */
-  --c-session:#d64545; --c-all:#2f80b8; --c-update:#3f9b54; --c-sched:#e3b23c;
+  --c-session:#d64545; --c-all:#2f80b8; --c-update:#3f9b54; --c-sched:#e3b23c; --c-stats:#8b5cf6;
 }
 
 *{box-sizing:border-box}
@@ -62,6 +62,7 @@ body::before{
 .tile.t-all{--accent:var(--c-all); --accent-soft:rgba(47,128,184,.16)}
 .tile.t-update{--accent:var(--c-update); --accent-soft:rgba(63,155,84,.16)}
 .tile.t-sched{--accent:var(--c-sched); --accent-soft:rgba(227,178,60,.16)}
+.tile.t-stats{--accent:var(--c-stats); --accent-soft:rgba(139,92,246,.16)}
 .ic{flex:0 0 auto; width:42px; height:42px; border-radius:10px; display:grid; place-items:center;
     background:var(--accent-soft, rgba(200,144,52,.16))}
 .ic svg{width:24px; height:24px; stroke:var(--accent); fill:none; stroke-width:1.7; stroke-linecap:round; stroke-linejoin:round}
@@ -259,6 +260,22 @@ body::before{
 .linkbtn:hover{text-decoration:underline}
 .linkbtn.danger{color:#a23}
 .editform{display:flex; flex-direction:column; gap:10px; margin-top:12px}
+.pastwrap{margin-top:28px}
+.scard.past{opacity:.82}
+
+/* ---------- community stats ---------- */
+.sectionhead{font-family:var(--display); font-weight:600; font-size:24px; color:#f7e6c8; margin:34px 0 0}
+.sectionsub{font-size:14px; color:#9fb3a4; margin:6px 0 14px}
+.rank{display:flex; flex-direction:column; gap:11px}
+.rankrow{display:flex; align-items:center; gap:12px}
+.rnum{flex:0 0 auto; width:22px; text-align:right; font-family:var(--display); font-weight:600; color:var(--ink-soft); font-size:14px}
+.rname{flex:0 0 auto; width:92px; font-weight:700; color:var(--ink); font-size:14px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.rcount{flex:0 0 auto; width:30px; text-align:right; font-weight:700; color:var(--gold-deep)}
+.rbar{flex:1; height:10px; border:0; border-radius:999px; -webkit-appearance:none; appearance:none; background:rgba(36,31,21,.08)}
+.rbar::-webkit-progress-bar{background:rgba(36,31,21,.08); border-radius:999px}
+.rbar::-webkit-progress-value{background:linear-gradient(90deg,var(--gold),var(--gold-deep)); border-radius:999px}
+.rbar::-moz-progress-bar{background:var(--gold-deep); border-radius:999px}
+@media(max-width:680px){.rname{width:70px}}
 
 /* ---------- helpers ---------- */
 .bar.between{justify-content:space-between}

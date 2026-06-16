@@ -55,6 +55,10 @@ function byDateAsc(a: GameSession, b: GameSession): number {
   return new Date(a.date).getTime() - new Date(b.date).getTime()
 }
 
+function byDateDesc(a: GameSession, b: GameSession): number {
+  return new Date(b.date).getTime() - new Date(a.date).getTime()
+}
+
 // ---------- Supabase row mapping ----------
 interface SessionRow {
   id: string
@@ -125,15 +129,19 @@ async function updateRow(
 
 // ---------- public API (auto-selects Supabase or in-memory) ----------
 
-export async function listSessions(): Promise<GameSession[]> {
+export async function listSessions(scope: 'upcoming' | 'past' = 'upcoming'): Promise<GameSession[]> {
   const sb = getSupabase()
   if (!sb) {
-    return Array.from(memStore.values()).filter(isUpcoming).sort(byDateAsc)
+    const all = Array.from(memStore.values())
+    return scope === 'past'
+      ? all.filter((s) => !isUpcoming(s)).sort(byDateDesc).slice(0, 50)
+      : all.filter(isUpcoming).sort(byDateAsc)
   }
 
-  const { data, error } = await sb.from(TABLE).select('*').order('date', { ascending: true })
+  const { data, error } = await sb.from(TABLE).select('*').order('date', { ascending: scope !== 'past' })
   if (error) throw new Error(error.message)
-  return (data as SessionRow[]).map(rowToSession).filter(isUpcoming)
+  const mapped = (data as SessionRow[]).map(rowToSession)
+  return scope === 'past' ? mapped.filter((s) => !isUpcoming(s)).slice(0, 50) : mapped.filter(isUpcoming)
 }
 
 export async function createSession(input: CreateSessionInput): Promise<GameSession> {
