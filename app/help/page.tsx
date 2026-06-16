@@ -59,7 +59,8 @@ export default function HelpPage() {
           <p>
             In <Link href="/collection?tab=bgg">Collection → Add from BGG</Link>, export your collection from BoardGameGeek
             (your collection page → <strong>Export</strong> → CSV) and <strong>upload the file</strong>. It shows your whole
-            shelf with cover art — and works even while BGG&apos;s API is down.
+            shelf with cover art, and you can <strong>save it to the community</strong> under your name so it joins Browse and
+            Plan a session. Works even while BGG&apos;s API is down.
           </p>
         </div>
 

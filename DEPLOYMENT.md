@@ -88,6 +88,32 @@ Supabase's free tier needs no credit card. Setup takes ~3 minutes:
 
    Until these columns exist the app still works — it just stores a single game and no location.
 
+   For **member collection uploads** (Collection → Add from BGG → save), add this table too:
+
+   ```sql
+   create table if not exists member_collections (
+     member text not null,
+     game_id text not null,
+     name text not null,
+     year int,
+     min_players int default 1,
+     max_players int default 1,
+     min_playtime int default 0,
+     max_playtime int default 0,
+     community_rating numeric default 0,
+     bgg_rank int,
+     thumbnail text default '',
+     image text default '',
+     updated_at timestamptz default now(),
+     primary key (member, game_id)
+   );
+   alter table member_collections enable row level security;
+   create policy "member_collections open" on member_collections for all using (true) with check (true);
+   grant all on member_collections to anon, authenticated;
+   ```
+
+   Without it, CSV uploads still parse and display — they just can't be saved to the community.
+
    *(Optional, recommended)* Add this function so RSVPs update **atomically** (no lost writes when
    two people RSVP at the same instant). Without it, the app falls back to a read-modify-write,
    which is fine for low traffic:

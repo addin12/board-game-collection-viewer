@@ -15,7 +15,7 @@ A felt-table-themed web app that brings a board game community's collections tog
 | Page | What you get |
 | ---- | ------------ |
 | **Home** | A tile menu into every section, styled like a green felt game table. |
-| **Collection** (`/collection`) | One page, three tabs: **Browse all** (the whole **109-game / 16-member** library with search, A–Z index, and category/member filters), **Plan a session** (the *"I'm playing with…"* pooled-collection mechanic → call a session), and **Add from BGG** (upload a BoardGameGeek **CSV export** to view any collection — cover art fetched automatically — which works even while BGG's API is locked). |
+| **Collection** (`/collection`) | One page, three tabs: **Browse all** (the whole **109-game / 16-member** library with search, A–Z index, and category/member filters), **Plan a session** (the *"I'm playing with…"* pooled-collection mechanic → call a session), and **Add from BGG** (upload a BoardGameGeek **CSV export** to view *and save* a collection into the community under a member's name — cover art fetched automatically — works even while BGG's API is locked). |
 | **Schedule** (`/schedule`) | Upcoming sessions with **RSVP** (in / maybe / out), a pending tracker, host edit/cancel, add-to-calendar, and a past-sessions log. |
 | **Community Stats** (`/community`) | Biggest collectors, most-owned games, and one-of-a-kind titles. |
 | **Collection view** (`/[username]`) | A clean, sortable view of any BGG collection with summary stats. |

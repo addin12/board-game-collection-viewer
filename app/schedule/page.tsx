@@ -1,12 +1,13 @@
 import PageHeader from '@/components/PageHeader'
 import SchedulePanel from '@/components/SchedulePanel'
-import { MEMBERS, COMMUNITY_GAMES } from '@/lib/community'
+import { getCommunity } from '@/lib/community-data'
 
 export const metadata = {
   title: 'Schedule',
 }
 
-export default function SchedulePage() {
+export default async function SchedulePage() {
+  const { games, members } = await getCommunity()
   return (
     <div className="wrap">
       <PageHeader />
@@ -18,7 +19,7 @@ export default function SchedulePage() {
         <div className="rule"></div>
       </header>
 
-      <SchedulePanel members={MEMBERS} games={COMMUNITY_GAMES} />
+      <SchedulePanel members={members} games={games} />
     </div>
   )
 }

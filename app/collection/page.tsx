@@ -1,6 +1,6 @@
 import PageHeader from '@/components/PageHeader'
 import CollectionTabs from '@/components/CollectionTabs'
-import { COMMUNITY_GAMES, MEMBERS } from '@/lib/community'
+import { getCommunity } from '@/lib/community-data'
 
 export const metadata = {
   title: 'Collection',
@@ -13,6 +13,7 @@ export default async function CollectionPage({
 }) {
   const { tab } = await searchParams
   const initialTab = tab === 'session' || tab === 'bgg' ? tab : 'browse'
+  const { games, members } = await getCommunity()
 
   return (
     <div className="wrap">
@@ -25,7 +26,7 @@ export default async function CollectionPage({
         <div className="rule"></div>
       </header>
 
-      <CollectionTabs members={MEMBERS} games={COMMUNITY_GAMES} initialTab={initialTab} />
+      <CollectionTabs members={members} games={games} initialTab={initialTab} />
     </div>
   )
 }

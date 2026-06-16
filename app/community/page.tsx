@@ -1,12 +1,14 @@
 import PageHeader from '@/components/PageHeader'
 import GameRow from '@/components/GameRow'
-import { COMMUNITY_GAMES, MEMBERS } from '@/lib/community'
+import { getCommunity } from '@/lib/community-data'
 
 export const metadata = {
   title: 'Community Stats',
 }
 
-export default function CommunityStatsPage() {
+export default async function CommunityStatsPage() {
+  const { games: COMMUNITY_GAMES, members: MEMBERS } = await getCommunity()
+
   const totalGames = COMMUNITY_GAMES.length
   const rated = COMMUNITY_GAMES.filter((g) => g.communityRating > 0)
   const avgRating = rated.length ? (rated.reduce((s, g) => s + g.communityRating, 0) / rated.length).toFixed(1) : '—'

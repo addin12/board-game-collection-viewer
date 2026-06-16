@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Link from 'next/link'
 import { parseBggCsv } from '@/lib/bgg-csv'
 import { CommunityGame } from '@/lib/types'
 import CommunityList from './CommunityList'
@@ -10,10 +11,15 @@ export default function CsvImport() {
   const [status, setStatus] = useState('')
   const [error, setError] = useState('')
 
+  const [member, setMember] = useState('')
+  const [saving, setSaving] = useState(false)
+  const [saved, setSaved] = useState('')
+
   async function onFile(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0]
     if (!file) return
     setError('')
+    setSaved('')
     setStatus('Reading file…')
 
     let parsed
@@ -52,6 +58,27 @@ export default function CsvImport() {
     setStatus(`Imported ${mapped.length} games.`)
   }
 
+  async function save() {
+    if (!member.trim() || !games || games.length === 0) return
+    setSaving(true)
+    setError('')
+    setSaved('')
+    try {
+      const res = await fetch('/api/collections', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ member: member.trim(), games }),
+      })
+      const body = await res.json()
+      if (!res.ok) throw new Error(body.error || 'Could not save the collection.')
+      setSaved(`Saved! ${body.member}’s ${body.count} games are now in the community collection.`)
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Could not save the collection.')
+    } finally {
+      setSaving(false)
+    }
+  }
+
   return (
     <div>
       <div className="panel full">
@@ -64,6 +91,32 @@ export default function CsvImport() {
         {status && <p className="importstatus">{status}</p>}
         {error && <p className="formerror">{error}</p>}
       </div>
+
+      {games && games.length > 0 && (
+        <div className="panel full mt-lg">
+          <h2>Save to the community</h2>
+          <p>Add this collection to the club library — it will show up in <strong>Browse all</strong> and <strong>Plan a session</strong>. Whose collection is this?</p>
+          {saved ? (
+            <div className="notice">
+              {saved} <Link href="/collection">Browse the collection →</Link>
+            </div>
+          ) : (
+            <div className="search">
+              <input
+                type="text"
+                placeholder="Member name (e.g. Deedeen)"
+                aria-label="Member name"
+                value={member}
+                onChange={(e) => setMember(e.target.value)}
+                maxLength={40}
+              />
+              <button type="button" className="btn" onClick={save} disabled={saving || !member.trim()}>
+                {saving ? 'Saving…' : 'Save to community'}
+              </button>
+            </div>
+          )}
+        </div>
+      )}
 
       {games !== null &&
         (games.length === 0 ? (
