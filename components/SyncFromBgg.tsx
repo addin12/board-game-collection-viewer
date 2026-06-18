@@ -2,10 +2,12 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { CommunityGame } from '@/lib/types'
 import CommunityList from './CommunityList'
 
 export default function SyncFromBgg() {
+  const router = useRouter()
   const [username, setUsername] = useState('')
   const [saveAs, setSaveAs] = useState('')
   const [busy, setBusy] = useState(false)
@@ -32,6 +34,9 @@ export default function SyncFromBgg() {
         owners: [body.member],
       }))
       setResult({ member: body.member, count: body.count, games })
+      // Re-pull the server-rendered community so Browse all / member filter /
+      // Plan a session immediately include the newly-synced member.
+      router.refresh()
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Could not sync that collection.')
     } finally {

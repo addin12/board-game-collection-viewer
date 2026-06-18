@@ -2,11 +2,13 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { parseBggCsv } from '@/lib/bgg-csv'
 import { CommunityGame } from '@/lib/types'
 import CommunityList from './CommunityList'
 
 export default function CsvImport() {
+  const router = useRouter()
   const [games, setGames] = useState<CommunityGame[] | null>(null)
   const [status, setStatus] = useState('')
   const [error, setError] = useState('')
@@ -72,6 +74,7 @@ export default function CsvImport() {
       const body = await res.json()
       if (!res.ok) throw new Error(body.error || 'Could not save the collection.')
       setSaved(`Saved! ${body.member}’s ${body.count} games are now in the community collection.`)
+      router.refresh() // refresh server data so the new member shows without a manual reload
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Could not save the collection.')
     } finally {
