@@ -1,4 +1,5 @@
 import Image from 'next/image'
+import Link from 'next/link'
 import { CommunityGame } from '@/lib/types'
 import { formatPlayTime, formatPlayerCount } from '@/lib/utils'
 
@@ -39,7 +40,7 @@ export default function GameRow({ game, showOwners = false }: { game: CommunityG
             <span className="pill" key={c}>{c}</span>
           ))}
           {showOwners && game.owners.map((o) => (
-            <span className="opill" key={o}>{o}</span>
+            <Link className="opill" href={`/members/${encodeURIComponent(o)}`} key={o}>{o}</Link>
           ))}
         </div>
       </div>

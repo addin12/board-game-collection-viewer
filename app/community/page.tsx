@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import PageHeader from '@/components/PageHeader'
 import GameRow from '@/components/GameRow'
 import { getCommunity } from '@/lib/community-data'
@@ -52,7 +53,7 @@ export default async function CommunityStatsPage() {
           {collectors.map((c, i) => (
             <div className="rankrow" key={c.name}>
               <span className="rnum">{i + 1}</span>
-              <span className="rname">{c.name}</span>
+              <Link className="rname" href={`/members/${encodeURIComponent(c.name)}`}>{c.name}</Link>
               <progress className="rbar" value={c.count} max={topCount} />
               <span className="rcount">{c.count}</span>
             </div>
