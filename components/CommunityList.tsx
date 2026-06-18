@@ -31,6 +31,8 @@ export default function CommunityList({
   const [range, setRange] = useState<string | null>(null)
   const [category, setCategory] = useState('')
   const [member, setMember] = useState('')
+  const [playerCount, setPlayerCount] = useState('')
+  const [sort, setSort] = useState<'name' | 'rating' | 'year' | 'players'>('name')
   const [page, setPage] = useState(0)
   const listTop = useRef<HTMLDivElement>(null)
 
@@ -61,13 +63,33 @@ export default function CommunityList({
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase()
     const r = RANGES.find((x) => x.label === range)
-    return games
+    const n = playerCount ? Number(playerCount) : 0
+    const list = games
       .filter((g) => (q ? g.name.toLowerCase().includes(q) : true))
       .filter((g) => (r ? r.test(g.name[0]?.toUpperCase() || '#') : true))
       .filter((g) => (category ? g.categories.includes(category) : true))
       .filter((g) => (member ? g.owners.includes(member) : true))
-      .sort((a, b) => a.name.localeCompare(b.name))
-  }, [games, query, range, category, member])
+      .filter((g) => {
+        if (!n) return true
+        if (n >= 8) return g.maxPlayers >= 8 // "8+" bucket
+        return g.minPlayers <= n && g.maxPlayers >= n
+      })
+    const sorted = [...list]
+    switch (sort) {
+      case 'rating':
+        sorted.sort((a, b) => b.communityRating - a.communityRating || a.name.localeCompare(b.name))
+        break
+      case 'year':
+        sorted.sort((a, b) => (b.yearPublished || 0) - (a.yearPublished || 0) || a.name.localeCompare(b.name))
+        break
+      case 'players':
+        sorted.sort((a, b) => b.maxPlayers - a.maxPlayers || a.name.localeCompare(b.name))
+        break
+      default:
+        sorted.sort((a, b) => a.name.localeCompare(b.name))
+    }
+    return sorted
+  }, [games, query, range, category, member, playerCount, sort])
 
   const pageCount = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE))
   const safePage = Math.min(page, pageCount - 1) // clamp if results shrank
@@ -104,6 +126,19 @@ export default function CommunityList({
               ))}
             </select>
           )}
+          <select className="select" aria-label="Filter by player count" value={playerCount} onChange={(e) => { setPlayerCount(e.target.value); resetToFirstPage() }}>
+            <option value="">Any player count</option>
+            {[1, 2, 3, 4, 5, 6, 7].map((n) => (
+              <option key={n} value={n}>{n} player{n === 1 ? '' : 's'}</option>
+            ))}
+            <option value="8">8+ players</option>
+          </select>
+          <select className="select" aria-label="Sort games" value={sort} onChange={(e) => { setSort(e.target.value as typeof sort); resetToFirstPage() }}>
+            <option value="name">Sort: A–Z</option>
+            <option value="rating">Sort: Top rated</option>
+            <option value="year">Sort: Newest</option>
+            <option value="players">Sort: Most players</option>
+          </select>
         </div>
         <div className="alpha">
           <button type="button" className={range === null ? 'is-active' : ''} onClick={() => { setRange(null); resetToFirstPage() }}>All</button>
