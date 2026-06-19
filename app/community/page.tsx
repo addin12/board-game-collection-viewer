@@ -8,6 +8,9 @@ export const metadata = {
   title: 'Community Stats',
 }
 
+// Reads live data (member collections + play stats) — always render on request.
+export const dynamic = 'force-dynamic'
+
 function monthLabel(m: string): string {
   const [y, mo] = m.split('-').map(Number)
   return new Date(y, mo - 1, 1).toLocaleString('en-US', { month: 'short', year: 'numeric' })

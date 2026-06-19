@@ -6,6 +6,9 @@ export const metadata = {
   title: 'Schedule',
 }
 
+// Reads live member collections for the session builder — render on request.
+export const dynamic = 'force-dynamic'
+
 export default async function SchedulePage() {
   const { games, members } = await getCommunity()
   return (
